@@ -32,11 +32,22 @@ jobs:
           mkdir -p www
           cp beast-v2.html www/index.html
 
-      - name: Create Android project
-        run: |
-          npx cap init "BEAST" "com.beast.performance" --web-dir www
-          npx cap add android
-          npx cap sync android
+       - name: Create Android project
+         run: | 
+    npx cap init "BEAST" "com.beast.performance" --web-dir www
+    npx cap add android
+    npx cap sync android
+
+    cat >> android/app/build.gradle <<'EOF'
+
+    configurations.all {
+        resolutionStrategy.force(
+            "org.jetbrains.kotlin:kotlin-stdlib:1.8.22",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.22",
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.22"
+        )
+    }
+    EOF
 
       - name: Build APK
         run: |
