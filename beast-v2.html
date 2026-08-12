@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#070a0f">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="beast-manifest.json">
+<title>BEAST — Performance</title>
+<meta name="application-name" content="BEAST Performance">
+<meta name="description" content="BEAST Performance — progressive training, recovery, stress control, progress tracking and daily readiness.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-title" content="BEAST">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%235b5cff'/%3E%3Cpath d='M11 10h17c6 0 10 3 10 8 0 3-1.5 5.5-4 6.8 3.2 1.2 5 3.7 5 7.2 0 5-4 8-11 8H11V10Zm7 6v6h9c2.5 0 4-1 4-3s-1.5-3-4-3h-9Zm0 12v6h10c2.7 0 4-1 4-3s-1.3-3-4-3H18Z' fill='%2305070b'/%3E%3C/svg%3E">
+
+<style>
+:root{
+  --bg:#070a0f; --panel:#0d121a; --panel2:#111823; --line:#263243;
+  --text:#f5f7fb; --muted:#8994a5; --accent:#5b5cff; --accent2:#25d3ff;
+  --danger:#ff5577; --gold:#ffc857; 
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:
+ radial-gradient(circle at 10% 0%,rgba(124,92,255,.16),transparent 30%),
+ radial-gradient(circle at 90% 15%,rgba(0,229,176,.09),transparent 28%),
+ var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+button{font:inherit;color:inherit}
+.app{max-width:1100px;margin:auto;padding-bottom:90px}
+header{position:sticky;top:0;z-index:30;background:rgba(7,10,15,.84);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.07)}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 18px}
+.brand{display:flex;align-items:center;gap:11px;font-weight:950;letter-spacing:.08em}
+.logo{width:40px;height:40px;border-radius:13px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:grid;place-items:center;color:#06080c;font-weight:1000}
+.brand small{display:block;color:var(--muted);font-size:9px;letter-spacing:.18em;margin-top:2px}
+.iconbtn{border:1px solid var(--line);background:var(--panel);border-radius:13px;padding:9px 11px;cursor:pointer}
+main{padding:22px 16px}
+.hero{padding:24px 4px 14px}
+.kicker{font-size:11px;letter-spacing:.18em;color:var(--accent2);font-weight:900}
+h1{font-size:clamp(32px,7vw,64px);line-height:.96;margin:10px 0 12px;letter-spacing:-.05em}
+.hero p{color:var(--muted);max-width:680px;margin:0;line-height:1.6}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.tile{min-height:150px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(17,24,35,.92),rgba(9,13,19,.96));border-radius:24px;padding:22px;box-shadow:var(--shadow);cursor:pointer;transition:.22s}
+.tile:hover{transform:translateY(-3px);border-color:rgba(124,92,255,.65)}
+.tile .emoji{font-size:28px}.tile h3{margin:20px 0 5px;font-size:20px}.tile p{margin:0;color:var(--muted)}
+.sectionhead{display:flex;justify-content:space-between;align-items:end;gap:12px;margin:34px 0 14px}
+.sectionhead h2{margin:0;font-size:25px}.sectionhead p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:7px 10px;color:var(--muted);font-size:11px;white-space:nowrap}
+.tabs{display:flex;gap:8px;overflow:auto;padding-bottom:4px;margin:8px 0 18px}
+.tab{border:1px solid var(--line);background:var(--panel);padding:11px 15px;border-radius:999px;white-space:nowrap;cursor:pointer}
+.tab.active{background:linear-gradient(135deg,var(--accent),#5c42d8);border-color:transparent}
+.daystrip{display:flex;gap:8px;overflow:auto;padding:2px 0 12px}
+.day{min-width:66px;border:1px solid var(--line);background:var(--panel);border-radius:16px;padding:9px 8px;text-align:center;cursor:pointer}
+.day b{display:block;font-size:16px}.day span{font-size:9px;color:var(--muted)}.day.active{border-color:var(--accent2);box-shadow:0 0 0 1px rgba(0,229,176,.2) inset}
+.planmeta{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.exercise{overflow:hidden;border:1px solid var(--line);background:var(--panel);border-radius:24px;margin:14px 0;box-shadow:var(--shadow)}
+.ex-img{width:100%;height:210px;object-fit:cover;background:linear-gradient(135deg,#171e29,#0b1017);display:block}
+.ex-body{padding:17px}
+.ex-top{display:flex;justify-content:space-between;gap:10px;align-items:start}
+.ex-title{font-size:22px;font-weight:900}.sets{color:var(--accent2);font-weight:900;margin-top:6px}.desc{color:var(--muted);font-size:13px;line-height:1.5;margin:8px 0 14px}
+.actions{display:flex;gap:8px}.btn{flex:1;border:1px solid var(--line);background:#111720;border-radius:14px;padding:12px 13px;font-weight:850;cursor:pointer}.btn.primary{background:linear-gradient(135deg,var(--accent),#5d43dc);border:0}.btn.done{background:rgba(0,229,176,.13);border-color:rgba(0,229,176,.4);color:var(--accent2)}
+.tutorial{display:none;margin-top:12px;padding:15px;border-radius:17px;background:#090e15;border:1px solid rgba(124,92,255,.25);animation:open .18s ease-out}
+.tutorial.open{display:block}
+.tutorial h4{margin:0 0 8px}.tutorial ul{padding-left:20px;margin:8px 0;color:#b9c2d0;font-size:13px;line-height:1.6}.tip{color:var(--gold);font-size:12px;font-weight:800}
+@keyframes open{from{opacity:0;transform:translateY(-5px)}to{opacity:1;transform:none}}
+.timerbox{position:relative;z-index:2;margin:28px 0 8px;border:1px solid rgba(124,92,255,.35);background:linear-gradient(145deg,rgba(14,20,31,.98),rgba(8,12,18,.98));border-radius:28px;padding:18px;box-shadow:var(--shadow);scroll-margin-top:90px}
+.timerhero{display:grid;grid-template-columns:96px 1fr;gap:14px;align-items:center;margin-bottom:14px}
+.timerphoto{width:96px;height:96px;border-radius:20px;object-fit:cover;background:#141b27;border:1px solid var(--line);display:block}
+.timerexercise{font-size:19px;font-weight:950;line-height:1.15}.timersub{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.4}
+.timerfocus{border:1px solid rgba(0,229,176,.22);background:rgba(0,229,176,.05);border-radius:17px;padding:10px 12px;margin:12px 0;font-size:12px;color:#cbd5e1}
+
+.timerrow{display:flex;align-items:center;justify-content:space-between;gap:12px}.timerlabel{font-size:11px;color:var(--muted);letter-spacing:.14em;font-weight:900}.timer{font-size:42px;font-weight:1000;letter-spacing:-.05em}.timerstatus{color:var(--accent2);font-size:12px;font-weight:800}.timerbuttons{display:flex;gap:8px}.timerbuttons button{border:1px solid var(--line);background:#111720;border-radius:13px;padding:10px 12px;cursor:pointer}
+.progressbar{height:7px;background:#1a2230;border-radius:99px;overflow:hidden;margin:10px 0}.progressbar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:.25s}
+.empty{border:1px dashed var(--line);border-radius:20px;padding:24px;color:var(--muted);text-align:center}
+.footer{margin-top:35px;color:#697487;font-size:11px;text-align:center;line-height:1.6}
+.hidden{display:none!important}
+@media(min-width:760px){main{padding:32px 26px}.grid{grid-template-columns:repeat(4,1fr)}.exercise-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.exercise{margin:0}.ex-img{height:240px}}
+@media(max-width:560px){.grid{grid-template-columns:1fr 1fr}.tile{min-height:130px;padding:17px}.tile h3{font-size:16px}.ex-img{height:185px}.timer{font-size:34px}.timerhero{grid-template-columns:76px 1fr}.timerphoto{width:76px;height:76px}.timerexercise{font-size:16px}}
+
+/* BEAST 6.0 systems */
+.panel{margin:30px 0;padding:20px;border:1px solid var(--line);background:linear-gradient(145deg,rgba(19,26,44,.94),rgba(8,12,20,.98));border-radius:28px;box-shadow:var(--shadow)}
+.panelhead{display:flex;justify-content:space-between;align-items:start;gap:12px;margin-bottom:16px}
+.panelhead h2{margin:0;font-size:26px}.panelhead p{margin:5px 0 0;color:var(--muted);font-size:13px}
+.panelgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.mission,.stress-card,.stat-card,.profile-card{border:1px solid var(--line);background:#0b111d;border-radius:20px;padding:16px}
+.mission{display:flex;gap:12px;align-items:center;cursor:pointer}
+.mission input{width:22px;height:22px;accent-color:var(--accent2)}
+.mission b{display:block}.mission small{display:block;color:var(--muted);margin-top:4px}
+.mission.done{border-color:rgba(38,230,193,.45);background:rgba(38,230,193,.06)}
+.breath{height:180px;border-radius:28px;display:grid;place-items:center;background:radial-gradient(circle,rgba(155,108,255,.28),rgba(38,230,193,.04) 45%,#080d17 72%);border:1px solid rgba(155,108,255,.3);text-align:center}
+.breath-orb{width:92px;height:92px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 0 55px rgba(155,108,255,.38);animation:breathe 8s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(.72);opacity:.7}50%{transform:scale(1.12);opacity:1}}
+.stress-actions{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.stress-actions .btn{flex:1;min-width:130px}
+.grounding{margin-top:12px;color:#c7cfdd;font-size:13px;line-height:1.65}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.recovery-good{border-color:rgba(0,229,176,.45)!important}.recovery-mid{border-color:rgba(255,200,87,.45)!important}.recovery-low{border-color:rgba(255,85,119,.45)!important}
+@media(max-width:560px){.stat-grid{grid-template-columns:1fr 1fr}.stat-grid .stat-card:last-child{grid-column:1/-1}}
+
+.stat-card strong{display:block;font-size:28px}.stat-card span{color:var(--muted);font-size:11px}
+.xpbar{height:12px;background:#1b2435;border-radius:99px;overflow:hidden}.xpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0}
+.week{display:flex;align-items:end;gap:8px;height:150px;padding:10px 0}
+.bar{flex:1;background:linear-gradient(180deg,var(--accent2),var(--accent));border-radius:10px 10px 4px 4px;min-height:8px;position:relative}
+.bar span{position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);font-size:9px;color:var(--muted)}
+.profile-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}.field{display:flex;flex-direction:column;gap:6px}.field label{font-size:10px;color:var(--muted);font-weight:900;letter-spacing:.1em}.field input,.field select{background:#0a101b;border:1px solid var(--line);color:var(--text);border-radius:13px;padding:12px}
+.toggle{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);padding:13px;border-radius:15px;margin-top:10px}.toggle input{width:20px;height:20px;accent-color:var(--accent2)}
+.session-mini{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;margin-top:10px;padding:12px;border:1px solid var(--line);border-radius:15px;background:#0a101b}
+.timerbox.active{border-color:rgba(38,230,193,.6);box-shadow:0 0 0 1px rgba(38,230,193,.12),var(--shadow)}
+.timerphase{display:inline-flex;padding:6px 9px;border-radius:999px;font-size:10px;font-weight:950;letter-spacing:.1em;background:rgba(155,108,255,.13);color:#c9b9ff}
+.timerphase.rest{background:rgba(38,230,193,.12);color:var(--accent2)}
+.timerphase.prepare{background:rgba(255,209,102,.12);color:var(--gold)}
+.timercontrols{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:10px}.timercontrols button{padding:10px 6px;border:1px solid var(--line);background:#111827;border-radius:12px;font-size:11px;font-weight:900;cursor:pointer}
+.timercontrols button.primary{background:linear-gradient(135deg,var(--accent),#6746df);border:0}
+.nextbox{margin-top:10px;padding:10px 12px;border-radius:14px;background:#0a101b;border:1px solid var(--line);font-size:11px;color:var(--muted)}
+@media(max-width:560px){.panelgrid,.profile-row{grid-template-columns:1fr}.stat-grid{grid-template-columns:1fr 1fr}.timercontrols{grid-template-columns:repeat(3,1fr)}}
+
+
+/* BEAST UI */
+:root{--shadow:0 18px 60px rgba(0,0,0,.34)}
+body{padding-bottom:76px;overscroll-behavior-y:none}
+.hero{padding-top:18px}.hero p{font-size:13px}
+.grid{gap:10px}.tile{min-height:132px;padding:18px;border-radius:22px}.tile .emoji{font-size:24px}.tile h3{margin:14px 0 4px}
+.panel{margin:20px 0;padding:16px;border-radius:24px}.panelhead h2{font-size:22px}
+.exercise{border-radius:20px}.ex-body{padding:14px}.ex-title{font-size:19px}.ex-img{height:190px}
+.timerbox{position:sticky;top:72px;margin:16px 0 10px;border-radius:22px;background:rgba(9,14,22,.96);backdrop-filter:blur(18px)}
+.timerbox.active{box-shadow:0 0 0 1px rgba(0,229,176,.18),0 20px 60px rgba(0,0,0,.4)}
+.timer{font-variant-numeric:tabular-nums}.timercontrols button{min-height:42px}
+.bottomnav{position:fixed;left:50%;bottom:10px;transform:translateX(-50%);z-index:100;display:grid;grid-template-columns:repeat(5,1fr);width:min(680px,calc(100% - 20px));padding:8px;background:rgba(10,14,21,.94);border:1px solid rgba(255,255,255,.1);border-radius:22px;backdrop-filter:blur(20px);box-shadow:0 18px 50px rgba(0,0,0,.5)}
+.bottomnav button{border:0;background:transparent;color:#8e99aa;font-size:9px;font-weight:900;letter-spacing:.08em;padding:6px 2px;cursor:pointer}.bottomnav span{display:block;font-size:18px;line-height:20px;color:#f4f7fb}
+.footer{margin-bottom:10px}
+@media(max-width:560px){body{padding-bottom:82px}.timerbox{top:66px}.bottomnav{bottom:7px}.bottomnav button{font-size:8px}.ex-img{height:175px}.hero h1{font-size:44px}}
+
+/* BEAST app-shell polish */
+:root{--accent:#5b5cff;--accent2:#25d3ff;--gold:#ffc857;--danger:#ff5577;--shadow:0 20px 70px rgba(0,0,0,.38)}
+body{min-height:100dvh;touch-action:manipulation}
+/* BEAST 10.0 — final APK-ready shell */
+.app{display:none}.app.ready{display:block}
+.logo svg{width:25px;height:25px;display:block}
+.authScreen{min-height:100dvh;display:grid;place-items:center;padding:28px 16px;background:
+ radial-gradient(circle at 15% 10%,rgba(37,211,255,.13),transparent 32%),
+ radial-gradient(circle at 90% 85%,rgba(91,92,255,.16),transparent 35%),var(--bg)}
+.authCard{width:min(430px,100%);padding:28px;border:1px solid rgba(111,130,160,.28);background:rgba(12,18,28,.92);border-radius:30px;box-shadow:0 30px 90px rgba(0,0,0,.48);backdrop-filter:blur(24px)}
+.authLogo{width:74px;height:74px;border-radius:22px;display:grid;place-items:center;margin-bottom:20px;background:linear-gradient(145deg,#25d3ff,#5b5cff 55%,#7a5cff);color:#05070b;box-shadow:0 16px 40px rgba(37,211,255,.16)}
+.authLogo svg{width:45px;height:45px}.authBrand{font-size:12px;letter-spacing:.2em;font-weight:950;color:#aab5c5}.authTitle{font-size:42px;line-height:.95;margin:10px 0}.authSub{color:var(--muted);font-size:13px;line-height:1.55;margin-bottom:20px}
+.authTabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:14px}.authTab{border:1px solid var(--line);background:#0a1018;color:#9ca8b9;border-radius:13px;padding:11px;font-weight:900;cursor:pointer}.authTab.active{color:#071017;background:linear-gradient(135deg,#25d3ff,#63f0d2);border-color:transparent}
+.authForm{display:grid;gap:10px}.authForm input{width:100%;background:#080e17;border:1px solid #2b3748;color:#f5f7fb;border-radius:14px;padding:14px;outline:none}.authForm input:focus{border-color:#25d3ff;box-shadow:0 0 0 3px rgba(37,211,255,.1)}
+.authPrimary{width:100%;border:0;border-radius:15px;padding:14px;background:linear-gradient(135deg,#25d3ff,#5b5cff);color:#05070b;font-weight:950;cursor:pointer}.authFoot{margin-top:13px;color:#738094;font-size:10px;line-height:1.5;text-align:center}.authError{min-height:17px;color:#ff728d;font-size:11px;font-weight:800}
+.accountLine{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;padding:11px 12px;border:1px solid var(--line);border-radius:14px;background:#090f18;font-size:11px}.accountLine button{border:0;background:transparent;color:#25d3ff;font-weight:900;cursor:pointer}
+.logoutBtn{margin-top:10px;width:100%}
+
+button,.tile,.tab,.day,.exercise{ -webkit-tap-highlight-color:transparent }
+.app{min-height:100dvh}
+header{padding-top:env(safe-area-inset-top)}
+main{padding-bottom:24px}
+.tile{position:relative;overflow:hidden}
+.tile:after{content:"";position:absolute;inset:auto -30% -70% 35%;height:130px;background:radial-gradient(circle,rgba(124,92,255,.16),transparent 65%);pointer-events:none}
+.tab{transition:.18s}.tab:active,.day:active,.btn:active,.iconbtn:active{transform:scale(.98)}
+.timerbox{z-index:20;box-shadow:0 14px 55px rgba(0,0,0,.5)}
+.timerbox.active{border-color:rgba(0,229,176,.55)}
+.timerphoto{object-position:center}
+.timer-live-dot{display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--accent2);box-shadow:0 0 12px var(--accent2);margin-right:6px}
+.timer-hero-badge{display:inline-flex;align-items:center;gap:4px;margin-top:7px;color:#9ca8b9;font-size:10px}
+.ex-img{background:#101722}
+.ex-img[src=""]{opacity:0}
+.panel{scroll-margin-top:86px}
+#stressSection,#missionsSection,#progressSection,#recoverySection,#archiveSection,#profileSection{animation:panelIn .2s ease-out}
+@keyframes panelIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.install-card{display:none;margin-top:14px;padding:13px 15px;border:1px solid rgba(0,229,176,.25);border-radius:18px;background:rgba(0,229,176,.05)}
+.install-card.show{display:flex;gap:10px;align-items:center;justify-content:space-between}
+.install-card .btn{max-width:130px;flex:none}
+.session-mini{word-break:break-word}
+@media(max-width:560px){
+ main{padding-left:13px;padding-right:13px}
+ .hero{padding-left:4px;padding-right:4px}
+ .timerbox{position:sticky;top:70px;z-index:25}
+ .timerhero{grid-template-columns:72px 1fr}.timerphoto{width:72px;height:72px}
+ .timercontrols{grid-template-columns:repeat(2,1fr)}
+ .timercontrols button:first-child{grid-column:1/-1}
+ .bottomnav{padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+}
+
+
+/* BEAST 10.0 additions */
+.quickbar{display:flex;gap:8px;overflow:auto;margin:14px 0}.quickbar button{white-space:nowrap;border:1px solid var(--line);background:var(--panel);border-radius:999px;padding:9px 12px;font-size:11px;font-weight:900;cursor:pointer}.quickbar button:active{transform:scale(.98)}
+.focusCard{margin:14px 0;border:1px solid rgba(255,200,87,.28);background:linear-gradient(145deg,rgba(255,200,87,.08),rgba(12,18,28,.9));border-radius:22px;padding:15px}.focusCard b{font-size:11px;letter-spacing:.12em;color:var(--gold)}.focusCard p{margin:7px 0 0;color:#d8dee8;font-size:13px}
+.dailyBox{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}.dailyBox .mini{border:1px solid var(--line);background:#0b111d;border-radius:18px;padding:14px}.mini strong{display:block;font-size:22px}.mini span{color:var(--muted);font-size:10px}
+.installHint{font-size:10px;color:var(--muted);margin-top:8px;line-height:1.5}
+@media(max-width:560px){.dailyBox{grid-template-columns:1fr 1fr}}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style id="beast-11-premium">
+:root{
+ --bg:#06080b;--card:#0d1117;--card2:#111720;--line:#252d38;
+ --text:#f7f9fb;--muted:#8b96a5;--green:#70e09a;--blue:#80aaff;
+ --accent:#b8ff6a;--shadow:0 24px 70px rgba(0,0,0,.42);
+}
+body{font-family:"Manrope",system-ui,sans-serif;letter-spacing:-.01em}
+h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{
+ font-family:"Space Grotesk","Manrope",sans-serif
+}
+.app{background:
+ radial-gradient(900px 420px at 50% -100px,rgba(184,255,106,.10),transparent 65%),
+ radial-gradient(700px 420px at 100% 30%,rgba(128,170,255,.07),transparent 70%),
+ #05070a}
+.card,.tile,.tool,.level,.exercise,.workoutPlayer{
+ box-shadow:var(--shadow);transition:transform .22s ease, border-color .22s ease, box-shadow .22s ease
+}
+.card:hover,.tile:hover,.tool:hover{box-shadow:0 28px 80px rgba(0,0,0,.5)}
+.primary{background:linear-gradient(135deg,#f8fafb,#cbd3db);box-shadow:0 10px 30px rgba(255,255,255,.08)}
+.page{animation:beastPageIn .32s cubic-bezier(.2,.8,.2,1)}
+@keyframes beastPageIn{from{opacity:0;transform:translateY(14px) scale(.992)}to{opacity:1;transform:none}}
+</style>
+
+
+<style id="beast-11-security-css">
+.securityCard{margin-top:12px;border:1px solid #2b3542;background:linear-gradient(145deg,#101720,#090d13);border-radius:20px;padding:16px}
+.securityCard .secTitle{font:800 13px "Space Grotesk";letter-spacing:.3px}
+.securityRow{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid #242c36}
+.securityRow:last-child{border-bottom:0}.securityRow small{display:block;color:#7e8998;margin-top:3px}
+.secBadge{font-size:9px;font-weight:900;padding:6px 9px;border-radius:999px;border:1px solid #35404d;color:#aeb8c6}
+</style>
+
+<style id="beast-bugfix-premium">
+body{font-family:"Manrope",system-ui,sans-serif}
+h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"Space Grotesk","Manrope",sans-serif}
+.card,.stress-card,.exercise,.tile,.tool,.level{box-shadow:0 18px 55px #0008;border-color:#27313c}
+.tile,.tool,.level{transition:transform .2s,border-color .2s,box-shadow .2s}.tile:hover,.tool:hover,.level:hover{transform:translateY(-2px);border-color:#3d4a58}
+.loginBox{border-radius:30px}.loginBox .field{height:52px;border-radius:16px}.loginBox .primary{height:52px;border-radius:16px}
+</style>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style id="beast-premium-superstars-css">
+.premiumHub{margin-top:28px;border:1px solid rgba(184,255,106,.22);border-radius:28px;padding:18px;background:linear-gradient(145deg,rgba(20,26,20,.98),rgba(8,11,14,.98));box-shadow:0 28px 90px rgba(0,0,0,.48);overflow:hidden;position:relative}
+.premiumHub:before{content:"";position:absolute;inset:-80px auto auto 45%;width:260px;height:260px;background:radial-gradient(circle,rgba(184,255,106,.14),transparent 68%);pointer-events:none}
+.premiumTop{display:flex;justify-content:space-between;align-items:flex-end;gap:14px;position:relative;z-index:1}
+.premiumEyebrow{font:900 10px "Space Grotesk";letter-spacing:.22em;color:#b8ff6a}.premiumTop h2{margin:4px 0 0;font:900 28px "Space Grotesk";letter-spacing:-.04em}.premiumTop p{margin:5px 0 0;color:#8f9baa;font-size:12px;line-height:1.5}
+.premiumBadge{padding:8px 11px;border-radius:999px;border:1px solid rgba(255,255,255,.14);background:#ffffff08;color:#fff;font:900 9px "Space Grotesk";letter-spacing:.14em;white-space:nowrap}
+.premiumGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px;position:relative;z-index:1}
+.premiumCard{border:1px solid #29333f;border-radius:22px;overflow:hidden;background:#0c1117;box-shadow:0 18px 55px #0008;transition:.22s ease;position:relative}.premiumCard:hover{transform:translateY(-3px);border-color:#596a7c;box-shadow:0 25px 70px #000a}
+.premiumCover{height:210px;position:relative;background:#111 center/cover no-repeat}.premiumCover:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(4,6,9,.95) 100%)}
+.premiumName{position:absolute;left:15px;bottom:13px;z-index:2}.premiumName b{display:block;font:900 24px "Space Grotesk";letter-spacing:-.04em}.premiumName span{font-size:9px;color:#b8ff6a;font-weight:900;letter-spacing:.16em}
+.premiumBody{padding:15px}.premiumMeta{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}.premiumMeta span{font-size:9px;font-weight:900;letter-spacing:.08em;color:#b8c2ce;border:1px solid #2b3541;padding:6px 8px;border-radius:999px;background:#ffffff05}.premiumDesc{color:#a2adbb;font-size:12px;line-height:1.55;min-height:55px}.premiumLevels{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:13px}.premiumLevel{padding:10px 7px;border:1px solid #29333f;border-radius:13px;background:#0a0f14}.premiumLevel b{display:block;font:900 10px "Space Grotesk"}.premiumLevel small{display:block;margin-top:4px;color:#7f8a99;font-size:9px;line-height:1.35}.premiumActions{display:flex;gap:8px;margin-top:13px}.premiumActions .btn{flex:1}.premiumSource{margin-top:10px;font-size:9px;color:#667383;line-height:1.45}.premiumSource a{color:#aeb9c6;text-decoration:none}.premiumSource a:hover{text-decoration:underline}
+.premiumModal{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.76);backdrop-filter:blur(14px);display:none;align-items:center;justify-content:center;padding:18px}.premiumModal.open{display:flex}.premiumSheet{width:min(720px,100%);max-height:88vh;overflow:auto;background:#090d12;border:1px solid #34404d;border-radius:26px;box-shadow:0 40px 120px #000c;padding:20px}.premiumSheetHead{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.premiumSheet h3{margin:0;font:900 25px "Space Grotesk"}.premiumClose{border:1px solid #34404d;background:#111820;color:#fff;border-radius:12px;width:40px;height:40px;cursor:pointer}.premiumWorkoutDay{margin-top:14px;padding:14px;border:1px solid #27313d;border-radius:18px;background:#0d131a}.premiumWorkoutDay h4{margin:0 0 9px;font:900 13px "Space Grotesk"}.premiumWorkoutDay ul{margin:0;padding-left:18px;color:#b0bac6;font-size:12px;line-height:1.75}.premiumNotice{margin-top:14px;padding:12px 14px;border-radius:15px;background:#b8ff6a0d;border:1px solid #b8ff6a2a;color:#cdd7df;font-size:11px;line-height:1.55}
+@media(max-width:700px){.premiumGrid{grid-template-columns:1fr}.premiumCover{height:230px}.premiumTop{align-items:flex-start;flex-direction:column}.premiumBadge{align-self:flex-start}}
+</style>
+
+<style id="beast-v2-final-css">
+.v2-lock{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(180deg,#05070bcc,#05070bf2);backdrop-filter:blur(6px);z-index:4}
+.v2-lockBox{width:min(360px,90%);padding:22px;border:1px solid #b8ff6a45;border-radius:22px;background:#0b1016;text-align:center;box-shadow:0 30px 90px #000c}.v2-lockBox .lock{font-size:30px}.v2-lockBox h3{margin:8px 0 5px}.v2-lockBox p{font-size:11px;color:#8995a4;line-height:1.55}.v2-price{font:900 30px "Space Grotesk";color:#b8ff6a;margin:10px}.v2-photo-note{font-size:9px;color:#718091;margin-top:8px;line-height:1.45}.tutorial.open{display:block}.tutorial{display:none}
+</style></head>
+<body>
+
+<style id="beast-11-intro-css">
+#beastIntro{position:fixed;inset:0;z-index:99999;background:#05070a;color:#fff;display:flex;align-items:center;justify-content:center;overflow:hidden;transition:opacity .45s}
+#beastIntro.gone{opacity:0;pointer-events:none}
+.introBg{position:absolute;inset:0;background:linear-gradient(180deg,#03050722,#030507e8),url("https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1400&q=88") center/cover no-repeat;filter:brightness(.68) contrast(1.08)}
+.introShade{position:absolute;inset:0;background:radial-gradient(circle at 50% 42%,transparent,#000d 88%)}
+.introCenter{position:relative;text-align:center}
+.introLogo{width:90px;height:90px;margin:auto;border-radius:26px;display:grid;place-items:center;background:#070b10c9;border:1px solid #ffffff55;font:800 48px "Space Grotesk";box-shadow:0 22px 80px #000a}
+.introName{margin-top:14px;font:800 37px "Space Grotesk";letter-spacing:8px}
+.introTag{margin-top:9px;font:700 9px "Manrope";letter-spacing:3px;color:#b8c1cb}
+</style>
+<div id="beastIntro"><div class="introBg"></div><div class="introShade"></div><div class="introCenter"><div class="introLogo">B</div><div class="introName">BEAST</div><div class="introTag">CONTROL YOUR NEXT MOVE</div></div></div>
+<script id="beast-11-intro-js">(function(){function boot(){var e=document.getElementById("beastIntro");if(!e)return;setTimeout(function(){e.classList.add("gone");setTimeout(function(){e.remove()},500)},1600)}if(document.readyState==="loading")document.addEventListener("DOMContentLoaded",boot);else boot()})();</script>
+<section id="authScreen" class="authScreen">
+ <div class="authCard">
+  <div class="authLogo" aria-label="BEAST logo">
+   <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 10h17c6 0 10 3 10 8 0 3-1.5 5.5-4 6.8 3.2 1.2 5 3.7 5 7.2 0 5-4 8-11 8H11V10Zm7 6v6h9c2.5 0 4-1 4-3s-1.5-3-4-3h-9Zm0 12v6h10c2.7 0 4-1 4-3s-1.3-3-4-3H18Z" fill="currentColor"/></svg>
+  </div>
+  <div class="authBrand">BEAST PERFORMANCE</div>
+  <div class="authTitle" id="authTitle">WELCOME BACK.</div>
+  <div class="authSub" id="authSub">Sign in to continue your training, recovery and progress.</div>
+  <div class="authTabs"><button class="authTab active" id="signInTab" onclick="setAuthMode('signin')">SIGN IN</button><button class="authTab" id="createTab" onclick="setAuthMode('create')">CREATE ACCOUNT</button></div>
+  <form class="authForm" onsubmit="handleAuth(event)">
+   <input id="authName" autocomplete="name" placeholder="Your name" class="hidden">
+   <input id="authEmail" type="email" autocomplete="email" placeholder="Email address" required>
+   <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
+   <div class="authError" id="authError"></div>
+   <button class="authPrimary" id="authSubmit">SIGN IN</button>
+  </form>
+  <div class="authFoot">Your account is stored securely on this device. The app is structured for a future cloud authentication service when the APK backend is connected.</div>
+ </div>
+</section>
+<div class="app">
+<header>
+ <div class="topbar">
+  <div class="brand"><div class="logo" aria-label="BEAST logo">
+  <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M11 10h17c6 0 10 3 10 8 0 3-1.5 5.5-4 6.8 3.2 1.2 5 3.7 5 7.2 0 5-4 8-11 8H11V10Zm7 6v6h9c2.5 0 4-1 4-3s-1.5-3-4-3h-9Zm0 12v6h10c2.7 0 4-1 4-3s-1.3-3-4-3H18Z" fill="currentColor"/></svg>
+ </div><div>BEAST<small>PERFORMANCE TRAINING</small></div></div>
+  <button class="iconbtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">⌃</button>
+ </div>
+</header>
+
+<main>
+<section class="hero">
+ <div class="kicker">BEAST PERFORMANCE</div>
+ <h1>BUILD<br><span style="color:var(--accent2)">BEAST.</span></h1>
+ <p>Train with intent. Recover intelligently. Keep the streak alive.</p>
+</section>
+
+<section id="home">
+ <div class="grid">
+  <div class="tile" onclick="showWorkout()"><div class="emoji">⚡</div><h3>WORKOUT</h3><p>Train progressively</p></div>
+  <div class="tile" onclick="showPremium()" style="border-color:#b8ff6a44;background:linear-gradient(145deg,#10170f,#0b1014)"><div class="emoji">♛</div><h3>PREMIUM WORKOUTS</h3><p>Brock Lesnar · John Cena</p></div>
+  <div class="tile" onclick="showPanel('missionsSection')"><div class="emoji">🎯</div><h3>MISSIONS</h3><p>Focus · Mind · Body</p></div>
+  <div class="tile" onclick="showPanel('stressSection')"><div class="emoji">🧠</div><h3>STRESS CONTROL</h3><p>Breathing · Grounding · Reset</p></div>
+  <div class="tile" onclick="showProgress()"><div class="emoji">📈</div><h3>PROGRESS</h3><p>See your growth</p></div>
+  <div class="tile" onclick="showPanel('recoverySection')"><div class="emoji">☾</div><h3>RECOVERY</h3><p>Sleep · Readiness · Reset</p></div>
+  <div class="tile" onclick="showArchive()"><div class="emoji">✦</div><h3>ARCHIVE</h3><p>Your private record</p></div>
+  <div class="tile" onclick="showPanel('profileSection')"><div class="emoji">◎</div><h3>PROFILE</h3><p>Goals · Settings · Preferences</p></div>
+ </div>
+</section>
+<div id="installCard" class="install-card"><div><b>INSTALL BEAST</b><div style="font-size:10px;color:var(--muted);margin-top:3px">Install BEAST on your Android device.</div></div><button class="btn primary" onclick="installApp()">INSTALL</button></div>
+
+<section id="workout">
+ <div class="sectionhead">
+  <div><h2>Training Lab</h2><p>Select your level, then choose any day.</p></div>
+  <div style="display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end"><span class="pill" id="planLength">30 DAYS</span><button class="btn" onclick="showPremium()">♛ PREMIUM</button></div>
+ </div>
+ <div class="tabs">
+  <button class="tab active" data-level="beginner">BEGINNER · EASY</button>
+  <button class="tab" data-level="intermediate">INTERMEDIATE · MEDIUM</button>
+  <button class="tab" data-level="pro">PRO · HARD</button>
+  <button class="tab" data-level="advanced">ADVANCED · ELITE</button>
+ </div>
+ <div class="daystrip" id="days"></div>
+ <div class="planmeta" id="planMeta"></div>
+ <div id="exercises" class="exercise-grid"></div>
+ 
+<div class="timerbox" id="timerBox">
+ <div class="timerhero">
+  <img class="timerphoto" id="timerPhoto" src="" alt="Current exercise">
+  <div>
+   <div class="timerlabel"><span class="timer-live-dot"></span>LIVE SESSION</div>
+   <div class="timerexercise" id="timerExercise">No exercise selected</div>
+   <div class="timersub" id="timerExerciseSub">Select START on an exercise. The timer follows that movement.</div><div class="timer-hero-badge" id="timerHeroBadge">READY</div>
+  </div>
+ </div>
+ <div class="timerrow">
+  <div>
+   <div class="timer" id="timer">00:05</div>
+   <div class="timerstatus" id="timerStatus">READY</div>
+  </div>
+  <div style="text-align:right"><span class="timerphase prepare" id="timerPhase">PREPARE</span><div style="margin-top:7px;font-size:11px;color:var(--muted)" id="timerSet">SET 0 / 0</div></div>
+ </div>
+ <div class="progressbar"><i id="timerProgress"></i></div>
+ <div class="timerfocus" id="timerFocus">Technique first · Clean reps > fast reps.</div><div style="display:flex;justify-content:space-between;color:var(--muted);font-size:10px"><span id="currentExercise">Choose START on an exercise or START DAY.</span><span id="timerMode">READY</span></div>
+ <div class="nextbox" id="nextBox">NEXT · —</div>
+ <div class="timercontrols">
+  <button class="primary" onclick="startTimer()">START / RESUME</button>
+  <button onclick="pauseTimer()">PAUSE</button>
+  <button onclick="adjustTimer(15)">+15 SEC</button>
+  <button onclick="adjustTimer(-15)">−15 SEC</button>
+  <button onclick="skipPhase()">SKIP</button>
+ </div>
+ <div class="timercontrols">
+  <button onclick="resetTimer()">RESET</button>
+  <button onclick="toggleAudio()">AUDIO <span id="audioState">ON</span></button>
+  <button onclick="toggleVibration()">VIBE <span id="vibeState">ON</span></button>
+  <button onclick="startDaySession()">START DAY</button>
+  <button onclick="finishSession()">FINISH</button>
+ </div>
+</div>
+</section>
+
+
+
+
+<section id="premiumSection" class="panel hidden">
+ <div class="premiumHub">
+  <div class="premiumTop">
+   <div><div class="premiumEyebrow">BEAST BLACK LABEL</div><h2>PREMIUM WORKOUTS</h2><p>Elite-inspired training plans, presented with real public training references where available.</p></div>
+   <div class="premiumBadge">🔒 PREMIUM COLLECTION · $2/MONTH</div>
+  </div>
+  <div class="premiumGrid">
+   <article class="premiumCard">
+    <div class="premiumCover" style="background-image:url('https://www.wwe.com/f/styles/gallery_img_l/public/photo/image/2013/03/12_BROCK_01292013lb_0175.jpg')"><div class="premiumName"><b>BROCK LESNAR</b><span>THE BEAST · POWER + ATHLETICISM</span></div></div>
+    <div class="premiumBody">
+     <div class="premiumMeta"><span>PREMIUM</span><span>3 LEVELS</span><span>STRENGTH</span></div>
+     <div class="premiumDesc">A BEAST adaptation built around publicly documented Lesnar training footage, wrestling background and heavyweight strength work. It is not presented as his private exact program.</div>
+     <div class="premiumLevels"><div class="premiumLevel"><b>BEGINNER</b><small>Technique · base strength · conditioning</small></div><div class="premiumLevel"><b>INTERMEDIATE</b><small>Compound strength · power · circuits</small></div><div class="premiumLevel"><b>PRO</b><small>Heavy strength · athletic conditioning</small></div></div>
+     <div class="premiumActions"><button class="btn primary" onclick="beastPremiumGate('brock')">VIEW WORKOUT</button><button class="btn" onclick="showPremiumSource('brock')">SOURCES</button></div>
+     <div class="premiumSource">Reference: <a href="https://www.wwe.com/videos/brock-lesnar-works-out-backstage-raw-july-15-2002" target="_blank" rel="noopener">WWE workout footage</a> · <a href="https://www.wwe.com/article/brock-lesnar-trains-with-gable-steveson" target="_blank" rel="noopener">WWE wrestling training</a></div>
+    </div>
+   </article>
+   <article class="premiumCard">
+    <div class="premiumCover" style="background-image:url('https://cdn.wallpapersafari.com/7/78/3q1LRh.jpg')"><div class="premiumName"><b>JOHN CENA</b><span>THE CHAMP · STRENGTH + VOLUME</span></div></div>
+    <div class="premiumBody">
+     <div class="premiumMeta"><span>PREMIUM</span><span>3 LEVELS</span><span>BODYBUILDING</span></div>
+     <div class="premiumDesc">A source-based Cena plan using exercises publicly documented by WWE, including free-weight pressing, triceps work, curls, deadlifts, pulldowns, push-ups and pull-ups.</div>
+     <div class="premiumLevels"><div class="premiumLevel"><b>BEGINNER</b><small>Controlled volume · technique · machines</small></div><div class="premiumLevel"><b>INTERMEDIATE</b><small>Free weights · volume · density</small></div><div class="premiumLevel"><b>PRO</b><small>High-volume strength · advanced work</small></div></div>
+     <div class="premiumActions"><button class="btn primary" onclick="beastPremiumGate('cena')">VIEW WORKOUT</button><button class="btn" onclick="showPremiumSource('cena')">SOURCES</button></div>
+     <div class="premiumSource">Reference: <a href="https://www.wwe.com/inside/news/archive/cenaworkout" target="_blank" rel="noopener">WWE Cena boot-camp workout</a> · <a href="https://www.wwe.com/inside/news/archive/flextimeforcena" target="_blank" rel="noopener">WWE documented workout</a></div>
+    </div>
+   </article>
+  </div>
+ </div>
+</section>
+<div id="premiumModal" class="premiumModal" onclick="if(event.target===this)closePremiumPlan()">
+ <div class="premiumSheet">
+  <div class="premiumSheetHead"><div><div class="premiumEyebrow">BEAST BLACK LABEL</div><h3 id="premiumModalTitle">PREMIUM PLAN</h3></div><button class="premiumClose" onclick="closePremiumPlan()">✕</button></div>
+  <div id="premiumModalBody"></div>
+ </div>
+</div>
+
+<section id="missionsSection" class="panel hidden">
+ <div class="panelhead"><div><h2>Daily Missions</h2><p>Small wins. Keep moving.</p></div><span class="pill" id="missionScore">0 / 5</span></div>
+ <div class="panelgrid" id="missionList"></div>
+</section>
+
+<section id="stressSection" class="panel hidden">
+ <div class="panelhead"><div><h2>Stress Control</h2><p>Quick resets for focus and recovery.</p></div><span class="pill">RESET PROTOCOL</span></div>
+ <div class="breath">
+  <div><div class="breath-orb"></div><div style="margin-top:10px;font-size:12px;font-weight:900">BREATHE · 4 IN / 4 OUT</div></div>
+ </div>
+ <div class="stress-actions">
+  <button class="btn primary" onclick="startReset(60,'60-SECOND RESET')">60-SECOND RESET</button>
+  <button class="btn" onclick="startReset(120,'2-MINUTE RESET')">2-MIN RESET</button>
+  <button class="btn" onclick="startReset(300,'5-MINUTE RESET')">5-MIN RESET</button>
+  <button class="btn" onclick="beep();showGrounding()">5–4–3–2–1 GROUNDING</button>
+  <button class="btn" onclick="beep();showStressProtocol('sigh')">PHYSIOLOGICAL SIGH</button>
+  <button class="btn" onclick="beep();showStressProtocol('scan')">BODY SCAN</button>
+ </div>
+ <div class="stress-card" style="margin-top:12px">
+  <b>Stress check</b>
+  <div class="stress-actions">
+   <button class="btn" onclick="setStress(2)">LOW</button>
+   <button class="btn" onclick="setStress(5)">MEDIUM</button>
+   <button class="btn" onclick="setStress(8)">HIGH</button>
+  </div>
+  <div id="stressScore" class="grounding">No check-in yet.</div>
+ </div>
+ <div id="grounding" class="grounding hidden"></div>
+ <div id="stressProtocol" class="grounding hidden"></div>
+ <div class="stress-card" style="margin-top:12px"><b>Quick rule</b><p style="color:var(--muted);font-size:13px;line-height:1.6">Slow the exhale, drop your shoulders, unclench your jaw, then return to the next useful action. BEAST is a support tool, not a medical service.</p></div>
+</section>
+
+<section id="recoverySection" class="panel hidden">
+ <div class="panelhead"><div><h2>Recovery</h2><p>Check readiness before training.</p></div><span class="pill" id="recoveryBadge">NOT CHECKED</span></div>
+ <div class="stat-grid">
+  <div class="stat-card"><strong id="sleepScore">—</strong><span>Sleep / 10</span></div>
+  <div class="stat-card"><strong id="energyScore">—</strong><span>Energy / 10</span></div>
+  <div class="stat-card"><strong id="recoveryScore">—</strong><span>Readiness</span></div>
+ </div>
+ <div class="stress-actions">
+  <button class="btn" onclick="setRecovery(8,8)">FEELING STRONG</button>
+  <button class="btn" onclick="setRecovery(6,6)">NORMAL DAY</button>
+  <button class="btn" onclick="setRecovery(4,4)">LOW BATTERY</button>
+ </div>
+ <div id="recoveryAdvice" class="grounding">Choose a readiness state. BEAST will keep the recommendation local to this device.</div>
+</section>
+
+<section id="progressSection" class="panel hidden">
+ <div class="panelhead"><div><h2>Progress</h2><p>Your training record.</p></div><span class="pill" id="levelBadge">LEVEL 1</span></div>
+ <div class="stat-grid">
+  <div class="stat-card"><strong id="doneCount">0</strong><span>Exercises completed</span></div>
+  <div class="stat-card"><strong id="dayCount">0</strong><span>Training days</span></div>
+  <div class="stat-card"><strong id="xpCount">0</strong><span>BEAST XP</span></div>
+ </div>
+ <div style="margin-top:16px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:7px"><span>LEVEL PROGRESS</span><span id="xpLabel">0 / 500 XP</span></div><div class="xpbar"><i id="xpBar"></i></div></div>
+ <div class="sectionhead" style="margin-top:25px"><div><h2 style="font-size:18px">7-Day Activity</h2><p>Completed exercise count.</p></div></div>
+ <div class="week" id="weekChart"></div>
+</section>
+
+<section id="archiveSection" class="panel hidden">
+ <div class="panelhead"><div><h2>Archive</h2><p>Sessions and reset history.</p></div><button class="btn" style="max-width:120px" onclick="clearArchive()">CLEAR</button></div>
+ <div id="archive" class="empty">No activity yet.</div>
+</section>
+
+<section id="profileSection" class="panel hidden">
+ <div class="panelhead"><div><h2>Profile</h2><p>Your preferences.</p></div><span class="pill">ON DEVICE</span></div>
+ <div class="profile-card">
+  <div class="profile-row">
+   <div class="field"><label>ATHLETE NAME</label><input id="profileName" placeholder="Your name"></div>
+   <div class="field"><label>PRIMARY GOAL</label><select id="profileGoal"><option>Build Strength</option><option>Build Muscle</option><option>Fat Loss</option><option>Conditioning</option><option>Discipline</option></select></div>
+  </div>
+  <div class="toggle"><span><b>Audio cues</b><small style="display:block;color:var(--muted)">Beep and voice transitions</small></span><input id="audioToggle" type="checkbox" checked></div>
+  <div class="toggle"><span><b>Vibration cues</b><small style="display:block;color:var(--muted)">Phone haptic on transitions</small></span><input id="vibeToggle" type="checkbox" checked></div>
+  <div class="stress-actions"><button class="btn primary" onclick="saveProfile()">SAVE PROFILE</button><button class="btn" onclick="logout()">SIGN OUT</button></div><button class="btn logoutBtn" onclick="resetAllData()">RESET APP DATA</button>
+ </div>
+</section>
+
+
+<div class="footer">BEAST · Performance training, recovery, progress & Black Label premium.</div>
+<nav class="bottomnav" aria-label="Primary navigation">
+ <button onclick="goHome()"><span>⌂</span>HOME</button>
+ <button onclick="showWorkout()"><span>⚡</span>WORKOUT</button>
+ <button onclick="showPanel('stressSection')"><span>◉</span>RESET</button>
+ <button onclick="showPremium()"><span>♛</span>PREMIUM</button>
+ <button onclick="showPanel('profileSection')"><span>◎</span>PROFILE</button>
+</nav>
+</main>
+</div>
+
+<script>
+/* BEAST 10.0 — local authentication bridge */
+let authMode="signin";
+let activeAccount=null;
+const ACCOUNT_KEY="beast10_accounts";
+const SESSION_KEY="beast10_session";
+function readAccounts(){try{return JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"{}")}catch(e){return {}}}
+function writeAccounts(a){localStorage.setItem(ACCOUNT_KEY,JSON.stringify(a))}
+async function passwordDigest(password){
+ try{if(window.crypto?.subtle){const data=new TextEncoder().encode(password);const hash=await crypto.subtle.digest("SHA-256",data);return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("")}}catch(e){}
+ let h=2166136261;for(let i=0;i<password.length;i++){h^=password.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16);
+}
+function setAuthMode(mode){
+ authMode=mode;document.getElementById("signInTab").classList.toggle("active",mode==="signin");document.getElementById("createTab").classList.toggle("active",mode==="create");
+ document.getElementById("authName").classList.toggle("hidden",mode!=="create");document.getElementById("authName").required=mode==="create";
+ document.getElementById("authTitle").textContent=mode==="signin"?"WELCOME BACK.":"CREATE YOUR PROFILE.";
+ document.getElementById("authSub").textContent=mode==="signin"?"Sign in to continue your training, recovery and progress.":"Create a private BEAST profile for this device.";
+ document.getElementById("authSubmit").textContent=mode==="signin"?"SIGN IN":"CREATE ACCOUNT";document.getElementById("authError").textContent="";
+}
+async function handleAuth(ev){
+ ev.preventDefault();const email=document.getElementById("authEmail").value.trim().toLowerCase();const password=document.getElementById("authPassword").value;const name=document.getElementById("authName").value.trim();const error=document.getElementById("authError");
+ if(!email||password.length<6){error.textContent="Use a valid email and a password of at least 6 characters.";return}
+ const accounts=readAccounts();const hash=await passwordDigest(password);
+ if(authMode==="create"){
+  if(accounts[email]){error.textContent="An account with this email already exists on this device.";return}
+  accounts[email]={email,name:name||"BEAST",passwordHash:hash,createdAt:new Date().toISOString()};writeAccounts(accounts);activeAccount=accounts[email];localStorage.setItem(SESSION_KEY,email);enterApp();return;
+ }
+ if(!accounts[email]){error.textContent="No BEAST account found on this device. Create one first.";return}
+ if(accounts[email].passwordHash!==hash){error.textContent="Email or password is incorrect.";return}
+ activeAccount=accounts[email];localStorage.setItem(SESSION_KEY,email);enterApp();
+}
+function enterApp(){
+ document.getElementById("authScreen").style.display="none";document.querySelector(".app").classList.add("ready");
+ if(activeAccount?.name){profile.name=profile.name||activeAccount.name;save("beast10_profile",profile)}
+ loadProfile();toast("Welcome to BEAST");
+}
+function logout(){
+ if(!confirm("Sign out of BEAST on this device?"))return;localStorage.removeItem(SESSION_KEY);activeAccount=null;document.querySelector(".app").classList.remove("ready");document.getElementById("authScreen").style.display="grid";document.getElementById("authEmail").value="";document.getElementById("authPassword").value="";setAuthMode("signin");window.scrollTo({top:0});
+}
+function bootAuth(){
+ const email=localStorage.getItem(SESSION_KEY);const accounts=readAccounts();
+ if(email&&accounts[email]){activeAccount=accounts[email];enterApp();}else{document.querySelector(".app").classList.remove("ready");document.getElementById("authScreen").style.display="grid";}
+}
+
+const IMG = {
+ squat:"https://www.mensjournal.com/.image/NDI6MDAwMDAwMDAxMTI5MDMz/bodyweight-squat-header.jpg?io=1&profile=share4-3",
+ push:"https://static.nike.com/a/images/f_auto/dpr_1.0%2Ccs_srgb/h_1212%2Cc_limit/5aaff8c8-b910-4462-9515-b9beb19f9548/les-conseils-de-coachs-de-crossfit-pour-faire-des-pompes-en-poirier.jpg",
+ plank:"https://cdn.shopify.com/s/files/1/0594/1913/2096/files/UN_INPOST_The_Science_of_Muscle_Memory__Regaining_Strength_After_a_Break.png?v=1763768057",
+ curl:"https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=1200&q=85",
+ dumbbell:"https://gigasnutrition.com/cdn/shop/articles/1555482883_2960x4440.jpg?v=1655973284",
+ gym:"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=85",
+ barbell:"https://img.menshealth.de/_/bg%3AFFFFFF/f%3Abest/h%3A2200/rt%3Afill/w%3A2200/plain/211114.jpg",
+ run:"https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=85",
+ yoga:"https://images.unsplash.com/photo-1558611848-73f7eb4001a1?auto=format&fit=crop&w=1200&q=85",
+ lunge:"https://zzcfitness.com/images/no-equipment/lunges-03.webp",
+};
+
+const EXERCISE_PHOTOS = {
+ "Bodyweight Squat":"https://www.mensjournal.com/.image/NDI6MDAwMDAwMDAxMTI5MDMz/bodyweight-squat-header.jpg?io=1&profile=share4-3",
+ "Incline Push-up":"https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=1200&q=85",
+ "Glute Bridge":"https://images.unsplash.com/photo-1558611848-73f7eb4001a1?auto=format&fit=crop&w=1200&q=85",
+ "Dead Bug":"https://www.mensjournal.com/.image/w_1200%2Ch_630%2Cg_auto%2Cc_fill/NDI6MDAwMDAwMDAwOTg2OTk0/dead-bug-header.jpg",
+ "Reverse Lunge":"https://zzcfitness.com/images/no-equipment/lunges-03.webp",
+ "Marching Plank":"https://tarzanweb.jp/uploads/2020/06/17/20200617rm_trainingmovie124-1536x864.jpg",
+ "Calf Raise":"https://primary.jwwb.nl/public/t/y/m/temp-opfgypihlwatynrocmva/diferencia-entre-gemelos-y-soleo-standard.png",
+ "Bird Dog":"https://d1rig8ldkblbsy.cloudfront.net/app/uploads/2020/05/05122353/bird-dog.jpg",
+ "Step-up":"https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=1200&q=85",
+ "Front-Foot Elevated Split Squat":"https://images.unsplash.com/photo-1597452485669-2c7bb5fef90d?auto=format&fit=crop&w=1200&q=85",
+ "Decline Push-up":"https://static.nike.com/a/images/f_auto/dpr_1.0%2Ccs_srgb/h_1212%2Cc_limit/5aaff8c8-b910-4462-9515-b9beb19f9548/les-conseils-de-coachs-de-crossfit-pour-faire-des-pompes-en-poirier.jpg",
+ "Bulgarian Split Squat":"https://s3.ap-northeast-1.amazonaws.com/net.cocodakara.bodydesign.assets/b4c650a3-1423-40b4-af89-832dd01003c6UN_INPOST_BulgarianSplitSquat-2-min.png.webp",
+ "Pike Push-up":"https://www.mensjournal.com/.image/MTk2MTM2NjYxOTY4MTY4NDUz/pike-pushup.jpg?profile=default",
+ "Single-Leg Glute Bridge":"https://img.championat.com/uQ9guyZAuEzw_INN7hDIWr_NI1iiAXTVMs-P60CLQBM/p%28q%3A0%29/i/w/q/1741342470505299961.jpg",
+ "Hollow Body Hold":"https://i.ytimg.com/vi/4xRpGgttca8/maxresdefault.jpg",
+ "Mountain Climber":"https://cdn.shopify.com/s/files/1/0594/1913/2096/files/UN_INPOST_The_Science_of_Muscle_Memory__Regaining_Strength_After_a_Break.png?v=1763768057",
+ "Dumbbell Row":"https://gigasnutrition.com/cdn/shop/articles/1555482883_2960x4440.jpg?v=1655973284",
+ "Lateral Lunge":"https://barb.pro/uploads/2022_/04/19/477823/aLXj2Z.jpg",
+ "Bear Crawl":"https://drivenaustin.com/wp-content/uploads/2018/04/20180413_074036.jpg",
+ "Barbell Back Squat":"https://cdn.shopify.com/s/files/1/0620/6560/6826/files/leg_press_vs_squat_-_is_leg_press_as_good_as_squats_-_best_leg_exercise_for_quads_-_squat_vs_leg_press_hypertrophy_-_knee_friendly_leg_training_-_leg_press_Stealth_Supplements_NZ-2.jpg?v=1774332466",
+ "Weighted Pull-up":"https://styla-prod-us.imgix.net/8020b468-407f-466e-ad24-016f419a3148/27391f69-9a26-4145-8783-8231c6159a0f?auto=format%2Ccompress&crop=faces%2Cedges&fit=crop&h=624.75&q=25&w=992.25",
+ "Dumbbell Bench Press":"https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=1200&q=85",
+ "Romanian Deadlift":"https://img.menshealth.de/_/bg%3AFFFFFF/f%3Abest/h%3A2200/rt%3Afill/w%3A2200/plain/211114.jpg",
+ "Walking Lunge":"https://steelfactor.ru/uploads/exercises/538_2.jpg",
+ "Hanging Knee Raise":"https://barbend.com/wp-content/uploads/2018/01/hanging-knee-raise.png",
+ "Burpee Broad Jump":"https://store.bbcosplay.com/news/2023/04/22/burpee-la-gi-cac-loi-ich-va-cach-tap-burpee-chuan-nhat11.jpg",
+ "Front Squat":"https://cdn.mos.cms.futurecdn.net/dBdGf3CtnoG4Z9zQ4vePKM.jpg",
+ "Single-Leg Romanian Deadlift":"https://img.redbull.com/images/q_auto%2Cf_auto/redbullcom/2017/01/18/3c7188e1-e5a5-4518-9895-d1d6946ad623/joe-canning-hamstring-exercises%3A-rdl.jpg",
+ "Pistol Squat":"https://images.surferseo.art/64cfe4ac-2106-4c2f-b1df-8e91a4b3327a.png",
+ "Handstand Pike Press":"https://static.wixstatic.com/media/d98058_3666795516f149acac23b3f1f5f68d16~mv2.png/v1/fill/w_980%2Ch_1742%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/d98058_3666795516f149acac23b3f1f5f68d16~mv2.png",
+ "Archer Push-up":"https://images.unsplash.com/photo-1599058917765-a780eda07a3e?auto=format&fit=crop&w=1200&q=85",
+ "Dragon Flag":"https://images.unsplash.com/photo-1566241142559-40e1dab266c6?auto=format&fit=crop&w=1200&q=85",
+ "Sprint Intervals":"https://images.unsplash.com/photo-1552674605-db6ffd4facb5?auto=format&fit=crop&w=1200&q=85"
+};
+function exercisePhoto(name,fallbackKey){ return EXERCISE_PHOTOS[name] || IMG[fallbackKey] || IMG.gym; }
+
+const exercises = {
+ beginner:[
+  ["Bodyweight Squat","3 × 10","Lower-body foundation.","squat","Stand tall, brace your core and sit your hips back. Keep knees tracking over toes and drive through the floor.","Slow 3-second descent. Keep heels planted."],
+  ["Incline Push-up","3 × 8","Controlled upper-body push.","push","Place hands on a stable elevated surface. Keep body in one straight line, lower chest and press away.","Use a higher surface if form breaks."],
+  ["Glute Bridge","3 × 12","Glute and hip activation.","yoga","Lie on your back, feet flat. Brace, squeeze glutes and lift hips until torso and thighs align.","Do not overextend the lower back."],
+  ["Dead Bug","3 × 8/side","Core control and coordination.","plank","Press lower back gently toward the floor. Extend opposite arm and leg without losing rib or hip position.","Move slowly; quality beats speed."],
+  ["Reverse Lunge","3 × 8/leg","Balance and leg strength.","lunge","Step one foot back, lower under control, then drive through the front foot to stand.","Keep the front knee stable."],
+  ["Marching Plank","3 × 20 sec","Introductory core stability.","plank","Hold a strong plank and slowly lift one foot at a time without rotating the hips.","Widen feet for stability."],
+  ["Calf Raise","3 × 15","Lower-leg strength and ankle control.","gym","Rise through the balls of both feet, pause at the top and lower slowly.","Use a wall for balance if needed."],
+  ["Bird Dog","3 × 8/side","Core stability and coordination.","yoga","From hands and knees, extend the opposite arm and leg while keeping hips square.","Move slowly and avoid arching the back."],
+  ["Step-up","3 × 8/leg","Foundational single-leg strength.","lunge","Place one foot on a stable step, drive through it and stand tall before lowering.","Use a low stable platform."]
+ ],
+ intermediate:[
+  ["Front-Foot Elevated Split Squat","4 × 8/leg","Unilateral strength and range.","lunge","Place front foot on a low platform. Drop the rear knee toward the floor while keeping the front heel heavy.","Control the bottom position."],
+  ["Decline Push-up","4 × 8","Upper-chest and shoulder strength.","push","Feet elevated on a stable platform. Brace hard, lower as one unit and press back up.","Keep elbows slightly tucked."],
+  ["Bulgarian Split Squat","3 × 10/leg","Single-leg strength and stability.","squat","Rest rear foot on a bench. Lower straight down, then drive through the front foot.","Use support if balance is limiting."],
+  ["Pike Push-up","3 × 8","Shoulder-focused bodyweight pressing.","push","From an inverted-V position, bend elbows and bring head toward the floor, then press away.","Keep hips high and neck neutral."],
+  ["Single-Leg Glute Bridge","3 × 10/leg","Glute strength and pelvic control.","yoga","One foot planted, other leg extended. Drive hips upward without twisting.","Pause at the top."],
+  ["Hollow Body Hold","3 × 20 sec","Deep anterior-core tension.","plank","Flatten the lower back, lift shoulders and extend legs only as far as you can maintain control.","Bend knees to scale down."],
+  ["Mountain Climber","4 × 30 sec","Core conditioning and athletic endurance.","run","Start in a strong plank and alternate knees toward the chest while keeping hips controlled.","Choose a pace you can sustain."],
+  ["Dumbbell Row","4 × 10/side","Back strength with controlled pulling.","dumbbell","Support one hand on a bench, pull the dumbbell toward the hip and lower slowly.","Keep shoulder away from the ear."],
+  ["Lateral Lunge","3 × 10/side","Frontal-plane leg strength and mobility.","lunge","Step wide, sit into one hip and push the floor away to return.","Keep the loaded foot planted."],
+  ["Bear Crawl","4 × 20 sec","Full-body coordination and conditioning.","plank","Keep knees hovering low while moving opposite hand and foot together.","Stay controlled rather than racing."],
+ ],
+ pro:[
+  ["Barbell Back Squat","5 × 5–8","Heavy lower-body strength.","barbell","Brace before each rep, unlock hips and knees together, descend under control and drive upward through the mid-foot.","Use appropriate loading and a rack."],
+  ["Weighted Pull-up","5 × 5–8","Advanced vertical pulling strength.","gym","Brace your core, pull elbows toward your ribs and bring chest toward the bar without swinging.","Add load only when strict reps are solid."],
+  ["Dumbbell Bench Press","4 × 8–10","Heavy pressing volume.","dumbbell","Set shoulders, lower dumbbells under control and press them upward while keeping wrists stacked.","Use a spotter for challenging loads."],
+  ["Romanian Deadlift","4 × 8","Posterior-chain strength.","barbell","Hinge at the hips with a soft knee bend. Keep the load close and stop when hamstrings reach strong tension.","Do not round the spine."],
+  ["Walking Lunge","4 × 12/leg","Leg strength under continuous load.","lunge","Take controlled steps, lower the rear knee and drive through the lead foot.","Keep torso tall."],
+  ["Hanging Knee Raise","4 × 10–15","Advanced core and hip-flexor work.","gym","Hang from a stable bar, brace and curl the pelvis upward instead of simply swinging the knees.","Eliminate momentum."],
+  ["Burpee Broad Jump","5 × 6","Power plus conditioning.","run","Drop to the floor, return to a loaded squat and explode forward into a broad jump.","Land softly and reset."],
+ ],
+ advanced:[
+  ["Front Squat","5 × 4–6","High-skill quad and trunk strength.","barbell","Keep elbows high, brace hard and descend between the hips. Drive up while maintaining the rack position.","Use a safe rack and conservative progression."],
+  ["Archer Push-up","4 × 6/side","Advanced unilateral pressing.","push","Shift most of your load onto one arm while the opposite arm stays extended. Alternate sides.","Scale to a wide push-up first."],
+  ["Pistol Squat","4 × 5/leg","Advanced unilateral leg control.","squat","Extend one leg forward, sit down under control and stand without the free foot touching.","Use a support while learning."],
+  ["Handstand Pike Press","4 × 5–8","High-level shoulder pressing.","gym","Set a stable inverted position and press through the shoulders while maintaining a controlled line.","Practice against a wall before freestanding work."],
+  ["Single-Leg Romanian Deadlift","4 × 8/leg","Posterior-chain balance and control.","barbell","Hinge on one leg, keep hips square and reach the free leg backward.","Hold a light support if needed."],
+  ["Dragon Flag","4 × 4–8","Advanced full-core strength.","plank","Anchor shoulders, keep body rigid and lower as one unit. Reverse before losing trunk position.","Use controlled partial range to learn."],
+  ["Sprint Intervals","8 × 20 sec","High-intensity conditioning.","run","Run hard for the interval, then walk until breathing is controlled enough for the next effort.","Warm up thoroughly before sprinting."],
+ ],
+};
+
+
+const planLength={beginner:30,intermediate:60,pro:90,advanced:90};
+const levelNames={beginner:"BEGINNER",intermediate:"INTERMEDIATE",pro:"PRO",advanced:"ADVANCED"};
+const difficultyNames={beginner:"FOUNDATION",intermediate:"MEDIUM",pro:"HARD",advanced:"ELITE"};
+
+let currentLevel=localStorage.getItem("beast10_level")||"beginner";
+let currentDay=Number(localStorage.getItem("beast10_day")||1);
+let completed=JSON.parse(localStorage.getItem("beast10_completed")||"[]");
+let activity=JSON.parse(localStorage.getItem("beast10_activity")||"{}");
+let missions=JSON.parse(localStorage.getItem("beast10_missions")||"{}");
+let archive=JSON.parse(localStorage.getItem("beast10_archive")||"[]");
+let profile=JSON.parse(localStorage.getItem("beast10_profile")||'{"name":"","goal":"Build Strength","audio":true,"vibe":true}');
+
+const timerState={
+ phase:"prepare", mode:"workout", remaining:5,total:5, running:false, interval:null, deadline:0,
+ exerciseIndex:0,set:1,totalSets:1,sessionList:[], single:false, label:"",
+ rest:60, audio:true, vibe:true, wake:null
+};
+
+const missionBank=[
+ ["TRAIN","Complete today's first exercise","Finish one clean exercise from the selected plan."],
+ ["MOVE","10-minute movement reset","Walk, stretch or move continuously for 10 minutes."],
+ ["FOCUS","5-minute no-phone block","Put the phone down and complete one focused task."],
+ ["HYDRATE","Hydration check","Drink water and consciously reset before your next task."],
+ ["RECOVER","Recovery check","Do 3 slow breaths and note one thing your body needs today."]
+];
+
+
+function imageFallback(img,label){
+ try{
+  img.onerror=null;
+  const safe=String(label||"BEAST").replace(/[^a-z0-9 ]/gi,"").slice(0,22)||"BEAST";
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="900" height="600" viewBox="0 0 900 600"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#171d2a"/><stop offset="1" stop-color="#070b12"/></linearGradient></defs><rect width="900" height="600" fill="url(#g)"/><circle cx="720" cy="110" r="180" fill="#7c5cff" opacity=".12"/><circle cx="160" cy="510" r="210" fill="#00e5b0" opacity=".08"/><text x="450" y="285" text-anchor="middle" fill="#f5f7fb" font-family="Arial" font-size="48" font-weight="800">${safe}</text><text x="450" y="335" text-anchor="middle" fill="#00e5b0" font-family="Arial" font-size="20" font-weight="700" letter-spacing="5">BEAST</text></svg>`;
+  img.src='data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);
+ }catch(e){ img.removeAttribute('src'); }
+}
+let deferredInstallPrompt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredInstallPrompt=e;document.getElementById('installCard')?.classList.add('show')});
+async function installApp(){
+ if(!deferredInstallPrompt){toast('Use browser menu → Add to Home screen');return}
+ deferredInstallPrompt.prompt(); await deferredInstallPrompt.userChoice; deferredInstallPrompt=null; document.getElementById('installCard')?.classList.remove('show');
+}
+function toast(msg){let t=document.getElementById('toast8');if(!t){t=document.createElement('div');t.id='toast8';t.className='toast';document.body.appendChild(t)}t.textContent=msg;t.classList.add('show');clearTimeout(t._x);t._x=setTimeout(()=>t.classList.remove('show'),1800)}
+
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+
+function dayExercises(level,day){
+ const base=exercises[level], shift=(day-1)%base.length;
+ const rotated=[...base.slice(shift),...base.slice(0,shift)];
+ const count=level==="beginner"?4:level==="intermediate"?5:6;
+ return rotated.slice(0,count);
+}
+
+function parseSets(str){
+ const m=String(str).match(/(\d+)/);
+ return m?Math.max(1,Number(m[1])):1;
+}
+function workSeconds(str){
+ const m=String(str).match(/(\d+)\s*sec/i);
+ return m?Number(m[1]):45;
+}
+function restSeconds(){return currentLevel==="beginner"?45:currentLevel==="intermediate"?60:currentLevel==="pro"?75:90}
+
+function renderDays(){
+ const wrap=document.getElementById("days"); wrap.innerHTML="";
+ const total=planLength[currentLevel];
+ const start=Math.max(1,Math.min(currentDay-2,total-6)), end=Math.min(total,start+6);
+ for(let d=start;d<=end;d++){
+  const b=document.createElement("button"); b.className="day"+(d===currentDay?" active":"");
+  b.innerHTML=`<b>${d}</b><span>${d===currentDay?"TODAY":"DAY"}</span>`;
+  b.onclick=()=>{currentDay=d;save("beast10_day",d);renderDays();renderPlan()};
+  wrap.appendChild(b);
+ }
+ document.getElementById("planLength").textContent=total+" DAYS";
+}
+
+function renderPlan(){
+ const list=dayExercises(currentLevel,currentDay);
+ document.getElementById("planMeta").innerHTML=
+  `<span class="pill">DAY ${currentDay} / ${planLength[currentLevel]}</span>
+   <span class="pill">${levelNames[currentLevel]}</span>
+   <span class="pill">${difficultyNames[currentLevel]}</span>
+   <button class="btn primary" style="max-width:160px" onclick="startDaySession()">START DAY WORKOUT</button>`;
+ const root=document.getElementById("exercises"); root.innerHTML="";
+ list.forEach((e,i)=>{
+  const [name,sets,desc,img,key,tips]=e;
+  const id=`${currentLevel}-${currentDay}-${name.replace(/[^a-z0-9]/gi,"")}`;
+  const isDone=completed.includes(id);
+  const card=document.createElement("article"); card.className="exercise";
+  card.innerHTML=`
+   <img class="ex-img" src="${exercisePhoto(name,img)}" alt="${escapeHtml(name)}" loading="lazy"
+    onerror="imageFallback(this,'${escapeHtml(name)}')">
+   <div class="ex-body">
+    <div class="ex-top"><div><div class="ex-title">${escapeHtml(name)}</div><div class="sets">${escapeHtml(sets)}</div></div><span class="pill">${i+1}/${list.length}</span></div>
+    <div class="desc">${escapeHtml(desc)}</div>
+    <div class="actions">
+      <button class="btn" onclick="toggleTutorial(this)">TUTORIAL</button>
+      <button class="btn ${isDone?'done':''}" onclick="toggleDone(this,'${id}')">${isDone?'✓ COMPLETED':'MARK COMPLETE'}</button>
+      <button class="btn primary" onclick="startExercise(${i})">START</button>
+    </div>
+    <div class="tutorial">
+      <h4>BEAST TECHNIQUE · ${escapeHtml(name)}</h4>
+      <ul>
+       <li>${escapeHtml(tips)}</li>
+       <li>Brace before the rep and keep the eccentric phase controlled.</li>
+       <li>Stop if technique breaks down. Reset your position before continuing.</li>
+      </ul>
+      <div class="tip">FORM RULE: clean reps > fast reps.</div>
+    </div>
+   </div>`;
+  root.appendChild(card);
+ });
+}
+
+function toggleTutorial(btn){
+ const t=btn.closest(".ex-body").querySelector(".tutorial");
+ t.classList.toggle("open");
+ btn.textContent=t.classList.contains("open")?"HIDE TUTORIAL":"TUTORIAL";
+}
+
+function toggleDone(btn,id){
+ const ix=completed.indexOf(id);
+ if(ix>=0){completed.splice(ix,1);btn.textContent="MARK COMPLETE";btn.classList.remove("done")}
+ else{
+  completed.push(id);btn.textContent="✓ COMPLETED";btn.classList.add("done");
+  recordToday();
+  addXP(25);
+  addArchive("EXERCISE",id);
+ }
+ save("beast10_completed",completed); updateProgress(); renderMissions(); refreshDailyMini();
+}
+
+function setTimerUI(){
+ const el=document.getElementById("timer");
+ el.textContent=`${String(Math.floor(timerState.remaining/60)).padStart(2,"0")}:${String(timerState.remaining%60).padStart(2,"0")}`;
+ document.getElementById("timerProgress").style.width=Math.max(0,Math.min(100,(1-timerState.remaining/timerState.total)*100))+"%";
+ document.getElementById("timerSet").textContent=`SET ${timerState.set} / ${timerState.totalSets}`;
+ document.getElementById("timerMode").textContent=timerState.running?"RUNNING":timerState.phase.toUpperCase();
+ document.getElementById("currentExercise").textContent=timerState.label||"Choose an exercise";
+ document.getElementById("timerStatus").textContent=timerState.mode==="stress"?(timerState.phase==="prepare"?"RESET STARTING":"RESET"):(timerState.phase==="work"?"WORKOUT":timerState.phase==="rest"?"REST":"GET READY");
+ document.getElementById("timerHeroBadge").textContent=timerState.mode==="stress"?"STRESS RESET":(timerState.phase==="work"?"WORKOUT":timerState.phase==="rest"?"RECOVERY":"GET READY");
+ const p=document.getElementById("timerPhase");
+ p.textContent=timerState.phase.toUpperCase();
+ p.className="timerphase "+timerState.phase;
+ const next=timerState.sessionList[timerState.exerciseIndex+1];
+ document.getElementById("nextBox").textContent=next?`NEXT · ${next[0]}`:"NEXT · SESSION COMPLETE";
+
+ const active=timerState.sessionList[timerState.exerciseIndex];
+ const photo=document.getElementById("timerPhoto");
+ const title=document.getElementById("timerExercise");
+ const sub=document.getElementById("timerExerciseSub");
+ const focus=document.getElementById("timerFocus");
+ if(active){
+   title.textContent=active[0];
+   photo.src=exercisePhoto(active[0],active[3]);
+   photo.alt=active[0];
+   photo.onerror=()=>imageFallback(photo,timerState.label||"BEAST workout");
+   sub.textContent=`${active[1]} · ${active[2]}`;
+   focus.textContent=active[5]||"Technique first · Clean reps > fast reps.";
+ }else{
+   title.textContent="No exercise selected";
+   photo.src=IMG.gym;
+   photo.alt="BEAST workout";
+   sub.textContent="Start an exercise to load its photo, name and technique focus here.";
+   focus.textContent="Technique first · Clean reps > fast reps.";
+ }
+ document.getElementById("timerBox").classList.toggle("active",timerState.running);
+}
+
+function wakeLock(){
+ try{ if("wakeLock" in navigator) navigator.wakeLock.request("screen").then(x=>timerState.wake=x).catch(()=>{}); }catch(e){}
+}
+function cue(text){
+ if(timerState.vibe && navigator.vibrate) navigator.vibrate([100,60,100]);
+ if(timerState.audio && "speechSynthesis" in window){try{speechSynthesis.cancel();speechSynthesis.speak(new SpeechSynthesisUtterance(text))}catch(e){}}
+}
+function beep(){
+ if(!timerState.audio)return;
+ try{
+  const C=window.AudioContext||window.webkitAudioContext;if(!C)return;
+  const a=new C(),o=a.createOscillator(),g=a.createGain();
+  o.type="sine";o.frequency.value=timerState.mode==="stress"?660:880;
+  g.gain.setValueAtTime(.0001,a.currentTime);g.gain.exponentialRampToValueAtTime(.06,a.currentTime+.015);
+  g.gain.exponentialRampToValueAtTime(.0001,a.currentTime+.20);
+  o.connect(g);g.connect(a.destination);o.start();o.stop(a.currentTime+.22);
+ }catch(e){}
+}
+
+function beginPhase(phase,seconds){
+ timerState.phase=phase;timerState.remaining=seconds;timerState.total=seconds;timerState.running=true;
+ timerState.deadline=Date.now()+seconds*1000;
+ clearInterval(timerState.interval);
+ wakeLock();
+ const spoken=timerState.mode==="stress"?(phase==="prepare"?"RESET STARTING":"RESET"):(timerState.label?`${timerState.label}. ${phase==="work"?"WORKOUT":phase==="rest"?"REST":"GET READY"}`:(phase==="work"?"WORKOUT":phase==="rest"?"REST":"GET READY"));
+ cue(spoken); beep();
+ setTimerUI();
+ timerState.interval=setInterval(updateClock,250);
+}
+
+function updateClock(){
+ if(!timerState.running)return;
+ timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+ setTimerUI();
+ if(timerState.remaining<=0)advancePhase();
+}
+
+function advancePhase(){
+ clearInterval(timerState.interval);
+ if(timerState.phase==="prepare"){beginPhase("work",workSeconds(timerState.sessionList[timerState.exerciseIndex][1]));return}
+ if(timerState.phase==="work"){
+  if(timerState.set<timerState.totalSets){beginPhase("rest",timerState.rest);return}
+  if(timerState.exerciseIndex<timerState.sessionList.length-1){
+  timerState.exerciseIndex++;
+  timerState.set=1;
+  timerState.label=timerState.sessionList[timerState.exerciseIndex][0];
+  timerState.totalSets=parseSets(timerState.sessionList[timerState.exerciseIndex][1]);
+  beginPhase("rest",timerState.rest);
+  return
+}
+  finishSession(true);return;
+ }
+ if(timerState.phase==="rest"){
+  if(timerState.set<timerState.totalSets){timerState.set++;beginPhase("work",workSeconds(timerState.sessionList[timerState.exerciseIndex][1]));return}
+  if(timerState.exerciseIndex<timerState.sessionList.length-1){
+  timerState.exerciseIndex++;
+  timerState.set=1;
+  timerState.totalSets=parseSets(timerState.sessionList[timerState.exerciseIndex][1]);
+  beginPhase("work",workSeconds(timerState.sessionList[timerState.exerciseIndex][1]));
+  return
+}
+  finishSession(true);
+ }
+}
+
+function startExercise(index){
+ timerState.mode="workout";
+ const list=dayExercises(currentLevel,currentDay);
+ timerState.sessionList=[list[index]];timerState.exerciseIndex=0;timerState.set=1;timerState.totalSets=parseSets(list[index][1]);timerState.rest=restSeconds();timerState.single=true;timerState.label=list[index][0];
+ beginPhase("prepare",5);
+ toast(`${list[index][0]} · GET READY`);
+ document.querySelector(".timerbox").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function startDaySession(){
+ timerState.mode="workout";
+ const list=dayExercises(currentLevel,currentDay);
+ timerState.sessionList=list;timerState.exerciseIndex=0;timerState.set=1;timerState.totalSets=parseSets(list[0][1]);timerState.rest=restSeconds();timerState.single=false;timerState.label=list[0][0];
+ beginPhase("prepare",5);
+ toast(`DAY ${currentDay} · WORKOUT STARTING`);
+ document.querySelector(".timerbox").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function startTimer(){
+ if(timerState.running)return;
+ if(!timerState.sessionList.length){startDaySession();return}
+ timerState.running=true;timerState.deadline=Date.now()+timerState.remaining*1000;
+ clearInterval(timerState.interval);timerState.interval=setInterval(updateClock,250);wakeLock();setTimerUI();
+}
+function pauseTimer(){
+ timerState.remaining=Math.max(0,Math.ceil((timerState.deadline-Date.now())/1000));
+ timerState.running=false;clearInterval(timerState.interval);setTimerUI();cue("PAUSED");
+}
+function resetTimer(){
+ timerState.mode="workout";
+ timerState.running=false;clearInterval(timerState.interval);
+ timerState.phase="prepare";timerState.remaining=5;timerState.total=5;timerState.set=1;
+ timerState.exerciseIndex=0;timerState.sessionList=[];timerState.label="";
+ setTimerUI();
+}
+function adjustTimer(delta){
+ timerState.remaining=Math.max(1,timerState.remaining+delta);
+ timerState.total=Math.max(timerState.total,timerState.remaining);
+ if(timerState.running)timerState.deadline=Date.now()+timerState.remaining*1000;
+ setTimerUI();
+}
+function skipPhase(){if(timerState.sessionList.length)advancePhase()}
+function finishSession(auto=false){
+ timerState.mode="workout";
+ const name=timerState.single?timerState.label:`DAY ${currentDay} ${levelNames[currentLevel]}`;
+ if(timerState.sessionList.length){addArchive("SESSION",`${name} · ${auto?"COMPLETED":"ENDED"}`);addXP(auto?75:20)}
+ timerState.running=false;clearInterval(timerState.interval);timerState.sessionList=[];timerState.label="";
+ timerState.phase="prepare";timerState.remaining=5;timerState.total=5;timerState.set=1;
+ document.getElementById("timerStatus").textContent=auto?"SESSION COMPLETE":"SESSION ENDED";
+ if(auto) recordToday();
+ document.getElementById("timerMode").textContent="DONE";setTimerUI();updateProgress();
+}
+function toggleAudio(){timerState.audio=!timerState.audio;profile.audio=timerState.audio;save("beast10_profile",profile);document.getElementById("audioState").textContent=timerState.audio?"ON":"OFF"}
+function toggleVibration(){timerState.vibe=!timerState.vibe;profile.vibe=timerState.vibe;save("beast10_profile",profile);document.getElementById("vibeState").textContent=timerState.vibe?"ON":"OFF"}
+
+function addArchive(type,text){
+ archive.unshift({type,text,time:new Date().toLocaleString()});
+ archive=archive.slice(0,80);save("beast10_archive",archive);renderArchive();
+}
+function addXP(n){
+ let xp=Number(localStorage.getItem("beast10_xp")||0)+n;save("beast10_xp",xp);updateProgress();
+}
+function updateProgress(){
+ const xp=Number(localStorage.getItem("beast10_xp")||0);
+ document.getElementById("doneCount").textContent=completed.length;
+ document.getElementById("xpCount").textContent=xp;
+ const level=Math.floor(xp/500)+1;
+ document.getElementById("levelBadge").textContent="LEVEL "+level;
+ document.getElementById("xpLabel").textContent=`${xp%500} / 500 XP`;
+ document.getElementById("xpBar").style.width=((xp%500)/5)+"%";
+ document.getElementById("dayCount").textContent=Object.keys(activity).length;
+ renderWeek();
+ renderArchive();
+}
+function renderWeek(){
+ const root=document.getElementById("weekChart");if(!root)return;
+ const now=new Date(), vals=[];
+ for(let i=6;i>=0;i--){
+  const d=new Date(now);d.setDate(now.getDate()-i);const key=d.toISOString().slice(0,10);
+  vals.push({key,count:Number(activity[key]||0),label:d.toLocaleDateString(undefined,{weekday:"short"}).slice(0,3)});
+ }
+ const max=Math.max(1,...vals.map(x=>x.count));
+ root.innerHTML=vals.map(v=>`<div class="bar" style="height:${Math.max(8,v.count/max*120)}px" title="${v.count} completed"><span>${v.label}</span></div>`).join("");
+}
+function recordToday(){
+ const key=new Date().toISOString().slice(0,10);activity[key]=(activity[key]||0)+1;save("beast10_activity",activity)
+}
+function renderArchive(){
+ const root=document.getElementById("archive");if(!root)return;
+ if(!archive.length){root.className="empty";root.textContent="No activity yet.";return}
+ root.className="";
+ root.innerHTML=archive.map(x=>`<div class="session-mini"><div><b>${escapeHtml(x.type)}</b><div style="color:var(--muted);margin-top:4px">${escapeHtml(x.text)}</div></div><small style="color:var(--muted)">${escapeHtml(x.time)}</small></div>`).join("");
+}
+function clearArchive(){if(confirm("Clear BEAST archive?")){archive=[];save("beast10_archive",archive);renderArchive()}}
+function toggleMission(i){
+ const key=new Date().toISOString().slice(0,10),id=key+"-"+i;
+ missions[id]=!missions[id];save("beast10_missions",missions);if(missions[id])addXP(10);renderMissions();
+}
+function renderMissions(){
+ const key=new Date().toISOString().slice(0,10),root=document.getElementById("missionList");if(!root)return;
+ let done=0;
+ root.innerHTML=missionBank.map((m,i)=>{
+  const id=key+"-"+i,checked=!!missions[id];if(checked)done++;
+  return `<label class="mission ${checked?"done":""}"><input type="checkbox" ${checked?"checked":""} onchange="toggleMission(${i})"><span><b>${m[0]} · ${m[1]}</b><small>${m[2]}</small></span></label>`;
+ }).join("");
+ document.getElementById("missionScore").textContent=`${done} / ${missionBank.length}`;
+}
+function showGrounding(){
+ const g=document.getElementById("grounding");g.classList.remove("hidden");
+ g.innerHTML="<b>5–4–3–2–1 GROUNDING</b><br>5 things you can see · 4 things you can touch · 3 things you can hear · 2 things you can smell · 1 slow breath you can notice.<br><br><span style='color:var(--gold)'>Move slowly. Name each item without judging it.</span>";
+}
+function showStressProtocol(type){
+ const box=document.getElementById("stressProtocol");box.classList.remove("hidden");
+ if(type==="sigh"){
+   box.innerHTML="<b>PHYSIOLOGICAL SIGH</b><br>Take one slow inhale through the nose, add a small second inhale, then make one long relaxed exhale. Repeat 3–5 times. Keep it comfortable.";
+ }else{
+   box.innerHTML="<b>60-SECOND BODY SCAN</b><br>Jaw → shoulders → hands → chest → stomach → legs. Notice where you are holding tension, soften what you can, then take one slow breath.";
+ }
+}
+function setStress(score){
+ const box=document.getElementById("stressScore");
+ const label=score<=3?"LOW LOAD":score<=6?"MEDIUM LOAD":"HIGH LOAD";
+ box.innerHTML=`<b>${label} · ${score}/10</b><br>${score>=7?"Use the 2-minute or 5-minute reset before starting another demanding task.":"Use a short reset, then return to one clear next action."}`;
+ addArchive("STRESS CHECK",`${label} · ${score}/10`);
+}
+function startReset(seconds,label){
+ timerState.mode="stress";
+ timerState.sessionList=[[label,`${seconds} sec`,"Stress reset","yoga","", "Slow breathing and a deliberate reset."]];
+ timerState.exerciseIndex=0;timerState.set=1;timerState.totalSets=1;timerState.rest=0;timerState.single=true;timerState.label=label;
+ beginPhase("prepare",3);
+ document.getElementById("timerBox").scrollIntoView({behavior:"smooth",block:"center"});
+}
+function hideAllSystems(){
+ ["workout","premiumSection","missionsSection","stressSection","progressSection","recoverySection","archiveSection","profileSection"].forEach(x=>document.getElementById(x).classList.add("hidden"));
+}
+function goHome(){ hideAllSystems(); window.scrollTo({top:0,behavior:"smooth"}); }
+
+function showPanel(id){
+ hideAllSystems();
+ document.getElementById(id).classList.remove("hidden");
+ if(id==="missionsSection")renderMissions();
+ if(id==="progressSection")updateProgress();
+ if(id==="recoverySection")loadRecovery();
+ if(id==="archiveSection")renderArchive();
+ if(id==="profileSection")loadProfile();
+ document.getElementById(id).scrollIntoView({behavior:"smooth",block:"start"});
+}
+function showWorkout(){
+ hideAllSystems();
+ document.getElementById("workout").classList.remove("hidden");
+ document.getElementById("workout").scrollIntoView({behavior:"smooth",block:"start"});
+}
+function showPremium(){
+ hideAllSystems();
+ document.getElementById("premiumSection").classList.remove("hidden");
+ document.getElementById("premiumSection").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function showProgress(){showPanel("progressSection")}
+function showArchive(){showPanel("archiveSection")}
+
+const premiumPlans={
+ brock:{
+  title:'BROCK LESNAR · THE BEAST PLAN',
+  note:'BEAST adaptation — not a claim of Brock Lesnar’s private/current exact routine. Public WWE material documents his training/conditioning and wrestling work.',
+  levels:{
+   beginner:[['Day 1 · Base Strength','Goblet Squat · Incline Push-up · Dumbbell Row · Farmer Carry · 10 min easy conditioning'],['Day 2 · Athletic Base','Reverse Lunge · Dumbbell Bench · Lat Pulldown · Plank · 6 × 20 sec brisk intervals'],['Day 3 · Recovery','Mobility · walking · light core · breathing reset']],
+   intermediate:[['Day 1 · Power Strength','Back Squat · Bench Press · Row · Farmer Carry · sled/carry intervals'],['Day 2 · Pull + Conditioning','Romanian Deadlift · Pull-up/Pulldown · Split Squat · Battle-rope intervals · core'],['Day 3 · Wrestling Engine','Sprawls · Bear Crawl · Med-ball slams · short sprints · mobility']],
+   pro:[['Day 1 · Heavy Beast','Back Squat · Bench Press · Weighted Pull-up · Deadlift variation · loaded carry'],['Day 2 · Power Engine','Front Squat · Push Press · Row · Sled Push · Sprint intervals'],['Day 3 · Grappling Conditioning','Wrestling drills · sprawls · carries · med-ball power · trunk work'],['Day 4 · Recovery','Mobility · easy zone-2 work · soft-tissue recovery']]
+  }
+ },
+ cena:{
+  title:'JOHN CENA · THE CHAMP PLAN',
+  note:'Source-based adaptation from WWE-documented Cena training. It is not presented as his current private program.',
+  levels:{
+   beginner:[['Day 1 · Push + Arms','Machine/DB Press · Cable Pressdown · Curl · Push-up · light lateral work'],['Day 2 · Pull','Lat Pulldown · Seated Row · DB Curl · Rear-delt work · core'],['Day 3 · Full Body','Goblet Squat · DB Bench · Pulldown · Walking Lunge · Plank']],
+   intermediate:[['Day 1 · Chest + Triceps','DB/Barbell Bench · Incline Press · Lying Triceps Extension · Cable Pressdown · Dips'],['Day 2 · Back + Biceps','Lat Pulldown · Row · Pull-up progression · DB Curl · Hammer Curl'],['Day 3 · Legs + Core','Squat · Romanian Deadlift · Lunge · Calf Raise · Hanging Knee Raise']],
+   pro:[['Day 1 · Chest + Triceps','Bench Press · Incline Press · Lying Triceps Extension · Cable Pressdown · Dips'],['Day 2 · Back + Biceps','Deadlift · Lat Pulldown · Pull-ups · Row · Curl variations'],['Day 3 · Legs','Squat · Romanian Deadlift · Walking Lunge · Leg Curl · Calves'],['Day 4 · Athletic Volume','Push-ups · Pull-ups · loaded carries · core · fast transitions between sets']]
+  }
+ }
+};
+function openPremiumPlan(key){
+ const plan=premiumPlans[key]; if(!plan)return;
+ document.getElementById('premiumModalTitle').textContent=plan.title;
+ let html='<div class="premiumNotice">'+escapeHtml(plan.note)+'</div>';
+ for(const [level,days] of Object.entries(plan.levels)){
+  html+='<div class="premiumWorkoutDay"><h4>'+escapeHtml(level.toUpperCase())+'</h4><ul>';
+  days.forEach(d=>html+='<li><b>'+escapeHtml(d[0])+'</b> — '+escapeHtml(d[1])+'</li>');
+  html+='</ul></div>';
+ }
+ html+='<div class="premiumNotice">Premium collection UI is ready. Real payments/subscriptions still require a payment provider and backend; this HTML does not pretend a payment has been processed.</div>';
+ document.getElementById('premiumModalBody').innerHTML=html;
+ document.getElementById('premiumModal').classList.add('open');
+}
+function closePremiumPlan(){document.getElementById('premiumModal').classList.remove('open')}
+function showPremiumSource(key){
+ const url=key==='cena'?'https://www.wwe.com/inside/news/archive/cenaworkout':'https://www.wwe.com/videos/brock-lesnar-works-out-backstage-raw-july-15-2002';
+ window.open(url,'_blank','noopener');
+}
+
+function setRecovery(sleep,energy){
+ const score=Math.round((sleep+energy)/2);
+ localStorage.setItem("beast10_recovery",JSON.stringify({sleep,energy,score,date:new Date().toISOString()}));
+ loadRecovery();
+ addArchive("RECOVERY",`Sleep ${sleep}/10 · Energy ${energy}/10 · Readiness ${score}/10`);
+}
+function loadRecovery(){
+ const data=JSON.parse(localStorage.getItem("beast10_recovery")||"null");
+ const badge=document.getElementById("recoveryBadge");if(!badge)return;
+ if(!data){
+  document.getElementById("sleepScore").textContent="—";
+  document.getElementById("energyScore").textContent="—";
+  document.getElementById("recoveryScore").textContent="—";
+  badge.textContent="NOT CHECKED";
+  return;
+ }
+ document.getElementById("sleepScore").textContent=data.sleep;
+ document.getElementById("energyScore").textContent=data.energy;
+ document.getElementById("recoveryScore").textContent=data.score;
+ badge.textContent=data.score>=8?"READY":data.score>=6?"NORMAL":"LOW";
+ const advice=document.getElementById("recoveryAdvice");
+ advice.textContent=data.score>=8
+   ?"Readiness is high. Follow the selected plan and keep technique strict."
+   :data.score>=6
+   ?"Readiness is normal. Train as planned, but do not chase extra volume."
+   :"Readiness is low. Consider the easier option, longer rests and a recovery-focused session.";
+}
+
+
+function loadProfile(){
+ document.getElementById("profileName").value=profile.name||"";
+ document.getElementById("profileGoal").value=profile.goal||"Build Strength";
+ document.getElementById("audioToggle").checked=profile.audio!==false;
+ document.getElementById("vibeToggle").checked=profile.vibe!==false;
+ timerState.audio=profile.audio!==false;timerState.vibe=profile.vibe!==false;
+ document.getElementById("audioState").textContent=timerState.audio?"ON":"OFF";
+ document.getElementById("vibeState").textContent=timerState.vibe?"ON":"OFF";
+}
+function saveProfile(){
+ profile={name:document.getElementById("profileName").value.trim(),goal:document.getElementById("profileGoal").value,audio:document.getElementById("audioToggle").checked,vibe:document.getElementById("vibeToggle").checked};
+ timerState.audio=profile.audio;timerState.vibe=profile.vibe;save("beast10_profile",profile);loadProfile();addArchive("PROFILE","Profile updated");
+ alert("BEAST profile saved.");
+}
+function resetAllData(){
+ if(!confirm("Reset all BEAST local data?"))return;
+ ["beast10_completed","beast10_activity","beast10_missions","beast10_archive","beast10_xp","beast10_profile","beast10_recovery"].forEach(k=>localStorage.removeItem(k));
+ location.reload();
+}
+
+function refreshDailyMini(){
+ const xp=Number(localStorage.getItem("beast10_xp")||0);
+ const todayMini=document.getElementById("todayMini"); if(todayMini) todayMini.textContent=String(completed.filter(x=>x.includes(`${currentLevel}-${currentDay}-`)).length);
+ const days=Object.keys(activity).sort(); let streak=0; const d=new Date();
+ for(let i=0;i<30;i++){const key=new Date(d.getFullYear(),d.getMonth(),d.getDate()-i).toISOString().slice(0,10);if(activity[key])streak++;else if(i>0)break;}
+ const streakMini=document.getElementById("streakMini"); if(streakMini) streakMini.textContent=String(streak);
+ const rules=["Consistency beats intensity. Win the next useful action.","Clean reps > fast reps. Own the movement.","Recovery is part of training, not time away from it.","Make the next 10 minutes count.","Protect your streak by making today's session realistic."];
+ const beastRule=document.getElementById("beastRule"); if(beastRule) beastRule.textContent=rules[new Date().getDate()%rules.length];
+}
+function quickFocus(){showPanel("missionsSection");toast("FOCUS MODE · ONE USEFUL MOVE");}
+function quickHydrate(){addArchive("HYDRATION","Hydration check completed");toast("HYDRATION · NICE RESET");}
+function quickReadiness(){showPanel("recoverySection");toast("READINESS CHECK");}
+
+document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
+ document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+ tab.classList.add("active");currentLevel=tab.dataset.level;currentDay=1;save("beast10_level",currentLevel);save("beast10_day",1);renderDays();renderPlan();
+});
+
+completed.forEach(()=>{});
+
+if('serviceWorker' in navigator && location.protocol!=='file:'){
+ navigator.serviceWorker.register('beast-sw.js').catch(()=>{});
+}
+
+updateProgress();renderDays();renderPlan();renderMissions();loadProfile();refreshDailyMini();bootAuth();
+
+</script>
+
+<script id="beast-11-intro-js">
+function beastEnter(){
+ localStorage.setItem("beast_intro_seen","1");
+ const el=document.getElementById("beastIntro");
+ if(el){el.classList.remove("show");setTimeout(()=>el.remove(),320);}
+}
+document.addEventListener("DOMContentLoaded",()=>{
+ const intro=document.getElementById("beastIntro");
+ if(intro && localStorage.getItem("beast_intro_seen")!=="1"){
+   intro.classList.add("show");
+ }
+});
+</script>
+
+<div style="text-align:center;color:#566171;font:700 9px Space Grotesk;letter-spacing:2px;margin-top:22px">BEAST FITNESS SYSTEM • 11.0</div>
+<script id="beast-v2-final-js">
+const BEAST_PREMIUM_KEY='beast_v2_premium_active';
+function beastPremiumActive(){return localStorage.getItem(BEAST_PREMIUM_KEY)==='1';}
+function beastPremiumGate(key){if(beastPremiumActive()){openPremiumPlanOriginal(key);return;}openPremiumPaywall();}
+function openPremiumPaywall(){
+ const m=document.getElementById('premiumModal');const t=document.getElementById('premiumModalTitle');const b=document.getElementById('premiumModalBody');
+ if(!m||!t||!b)return;t.textContent='BEAST BLACK LABEL · LOCKED';
+ b.innerHTML='<div class="v2-lockBox" style="position:relative;inset:auto;width:auto"><div class="lock">🔒</div><h3>PREMIUM ACCESS REQUIRED</h3><p>Brock Lesnar and John Cena programs, including the 30 / 60 / 90-day plans, exercises, tutorials and diets, remain locked until the subscription is successfully verified.</p><div class="v2-price">$2 <small>/ month</small></div><button class="btn primary" onclick="beastSubscriptionNotice()">SUBSCRIBE · $2/MONTH</button><div class="v2-photo-note">Real payment verification will be connected to Google Play Billing/backend before premium access is enabled. No fake unlock is used.</div></div>';
+ m.classList.add('open');
+}
+function beastSubscriptionNotice(){toast('Subscription checkout is not connected yet. Premium stays locked until real payment verification is added.');}
+function openPremiumPlanOriginal(key){return window.__beastOpenPremiumOriginal(key)}
+window.addEventListener('DOMContentLoaded',()=>{
+ if(typeof openPremiumPlan==='function'&&!window.__beastOpenPremiumOriginal){window.__beastOpenPremiumOriginal=openPremiumPlan;window.openPremiumPlan=beastPremiumGate;}
+});
+</script><script>window.BEAST_V2_OFFLINE_PHOTO_COUNT=Object.keys(EXERCISE_PHOTOS).length;</script></body>
+</html>
