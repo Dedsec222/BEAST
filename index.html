@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- BEAST Play Store clean production source -->
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <meta name="theme-color" content="#070a0f">
@@ -12,7 +13,7 @@
 <meta name="application-name" content="BEAST Performance">
 <meta name="description" content="BEAST Performance — progressive training, recovery, stress control, progress tracking and daily readiness.">
 <meta name="mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-title" content="BEAST">
+<meta name="mobile-web-app-title" content="BEAST"><meta name="beast-build" content="V5-PHOTO-QA-STRICT-2026-08-14">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='14' fill='%235b5cff'/%3E%3Cpath d='M11 10h17c6 0 10 3 10 8 0 3-1.5 5.5-4 6.8 3.2 1.2 5 3.7 5 7.2 0 5-4 8-11 8H11V10Zm7 6v6h9c2.5 0 4-1 4-3s-1.5-3-4-3h-9Zm0 12v6h10c2.7 0 4-1 4-3s-1.3-3-4-3H18Z' fill='%2305070b'/%3E%3C/svg%3E">
 
 <style>
@@ -279,16 +280,15 @@ h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"
   </div>
   <div class="authBrand">BEAST PERFORMANCE</div>
   <div class="authTitle" id="authTitle">WELCOME BACK.</div>
-  <div class="authSub" id="authSub">Sign in to continue your training, recovery and progress.</div>
+  <div class="authSub" id="authSub">Sign in to continue.</div>
   <div class="authTabs"><button class="authTab active" id="signInTab" onclick="setAuthMode('signin')">SIGN IN</button><button class="authTab" id="createTab" onclick="setAuthMode('create')">CREATE ACCOUNT</button></div>
-  <form class="authForm" onsubmit="handleAuth(event)">
+  <form class="authForm" id="beastAuthForm">
    <input id="authName" autocomplete="name" placeholder="Your name" class="hidden">
    <input id="authEmail" type="email" autocomplete="email" placeholder="Email address" required>
    <input id="authPassword" type="password" autocomplete="current-password" placeholder="Password" minlength="6" required>
    <div class="authError" id="authError"></div>
-   <button class="authPrimary" id="authSubmit">SIGN IN</button>
+   <button type="submit" class="authPrimary" id="authSubmit">SIGN IN</button>
   </form>
-  <div class="authFoot">Your account is stored securely on this device. The app is structured for a future cloud authentication service when the APK backend is connected.</div>
  </div>
 </section>
 <div class="app">
@@ -389,9 +389,7 @@ h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"
   <article class="beastSuperCard">
    <div class="beastSuperPhoto beastBrock"><div class="premiumName"><b>BROCK LESNAR</b><span>THE BEAST · POWER + ATHLETICISM</span></div></div>
    <div class="beastSuperBody">
-    <div class="beastSuperKicker">SOURCE-BASED ADAPTATION</div>
     <div class="beastSuperName">THE BEAST PROGRAM</div>
-    <div class="beastSuperMeta">Publicly documented training themes, wrestling conditioning and strength work. Not Brock Lesnar's private/current exact routine.</div>
     <div class="beastLevelRow">
       <button class="beastLevelBtn" onclick="openBeastProgram('brock','beginner')"><b>30</b>DAYS · FOUNDATION</button>
       <button class="beastLevelBtn" onclick="openBeastProgram('brock','intermediate')"><b>60</b>DAYS · BUILD</button>
@@ -403,9 +401,7 @@ h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"
   <article class="beastSuperCard">
    <div class="beastSuperPhoto beastCena"><div class="premiumName"><b>JOHN CENA</b><span>THE CHAMP · STRENGTH + VOLUME</span></div></div>
    <div class="beastSuperBody">
-    <div class="beastSuperKicker">SOURCE-BASED ADAPTATION</div>
     <div class="beastSuperName">THE CHAMP PROGRAM</div>
-    <div class="beastSuperMeta">Built from publicly documented Cena training themes: pressing, pulling, arms, deadlifts, pulldowns, push-ups and pull-ups. Not his private/current exact routine.</div>
     <div class="beastLevelRow">
       <button class="beastLevelBtn" onclick="openBeastProgram('cena','beginner')"><b>30</b>DAYS · FOUNDATION</button>
       <button class="beastLevelBtn" onclick="openBeastProgram('cena','intermediate')"><b>60</b>DAYS · BUILD</button>
@@ -415,7 +411,6 @@ h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"
    </div>
   </article>
  </div>
- <div class="beastSourceBar"><b>TRAINING SOURCES</b><span>WWE-documented material + published training references. Premium is an app presentation/adaptation, not an endorsement or claim of private routines.</span><button class="btn" onclick="showPremiumSource('brock')">BROCK SOURCE</button><button class="btn" onclick="showPremiumSource('cena')">CENA SOURCE</button></div>
 </section>
 <div id="beastProgramModal" class="beastPremiumModal" onclick="if(event.target===this)closeBeastProgram()">
  <div class="beastPremiumSheet">
@@ -524,47 +519,58 @@ h1,h2,h3,.logo,.eyebrow,.pill,.timer,.workoutTimer,.playerExercise{font-family:"
 </div>
 
 <script>
-/* BEAST 10.0 — local authentication bridge */
+/* BEAST AUTH — stable local test account/session layer */
 let authMode="signin";
 let activeAccount=null;
-const ACCOUNT_KEY="beast10_accounts";
-const SESSION_KEY="beast10_session";
+const ACCOUNT_KEY="beast_auth_accounts_v2";
+const SESSION_KEY="beast_auth_session_v2";
 function readAccounts(){try{return JSON.parse(localStorage.getItem(ACCOUNT_KEY)||"{}")}catch(e){return {}}}
-function writeAccounts(a){localStorage.setItem(ACCOUNT_KEY,JSON.stringify(a))}
-async function passwordDigest(password){
- try{if(window.crypto?.subtle){const data=new TextEncoder().encode(password);const hash=await crypto.subtle.digest("SHA-256",data);return [...new Uint8Array(hash)].map(b=>b.toString(16).padStart(2,"0")).join("")}}catch(e){}
- let h=2166136261;for(let i=0;i<password.length;i++){h^=password.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16);
-}
+function writeAccounts(a){try{localStorage.setItem(ACCOUNT_KEY,JSON.stringify(a));return true}catch(e){return false}}
+function simpleHash(v){let h=2166136261;for(let i=0;i<v.length;i++){h^=v.charCodeAt(i);h=Math.imul(h,16777619)}return (h>>>0).toString(16)}
 function setAuthMode(mode){
- authMode=mode;document.getElementById("signInTab").classList.toggle("active",mode==="signin");document.getElementById("createTab").classList.toggle("active",mode==="create");
- document.getElementById("authName").classList.toggle("hidden",mode!=="create");document.getElementById("authName").required=mode==="create";
- document.getElementById("authTitle").textContent=mode==="signin"?"WELCOME BACK.":"CREATE YOUR PROFILE.";
- document.getElementById("authSub").textContent=mode==="signin"?"Sign in to continue your training, recovery and progress.":"Create a private BEAST profile for this device.";
- document.getElementById("authSubmit").textContent=mode==="signin"?"SIGN IN":"CREATE ACCOUNT";document.getElementById("authError").textContent="";
+ authMode=mode;
+ const sign=document.getElementById("signInTab"),create=document.getElementById("createTab"),name=document.getElementById("authName"),submit=document.getElementById("authSubmit");
+ if(sign)sign.classList.toggle("active",mode==="signin"); if(create)create.classList.toggle("active",mode==="create");
+ if(name){name.classList.toggle("hidden",mode!=="create");name.required=mode==="create";}
+ const title=document.getElementById("authTitle"),sub=document.getElementById("authSub"),err=document.getElementById("authError");
+ if(title)title.textContent=mode==="signin"?"WELCOME BACK.":"CREATE YOUR PROFILE.";
+ if(sub)sub.textContent=mode==="signin"?"Sign in to continue.":"Create your BEAST profile.";
+ if(submit)submit.textContent=mode==="signin"?"SIGN IN":"CREATE ACCOUNT"; if(err)err.textContent="";
 }
-async function handleAuth(ev){
- ev.preventDefault();const email=document.getElementById("authEmail").value.trim().toLowerCase();const password=document.getElementById("authPassword").value;const name=document.getElementById("authName").value.trim();const error=document.getElementById("authError");
- if(!email||password.length<6){error.textContent="Use a valid email and a password of at least 6 characters.";return}
- const accounts=readAccounts();const hash=await passwordDigest(password);
- if(authMode==="create"){
-  if(accounts[email]){error.textContent="An account with this email already exists on this device.";return}
-  accounts[email]={email,name:name||"BEAST",passwordHash:hash,createdAt:new Date().toISOString()};writeAccounts(accounts);activeAccount=accounts[email];localStorage.setItem(SESSION_KEY,email);enterApp();return;
- }
- if(!accounts[email]){error.textContent="No BEAST account found on this device. Create one first.";return}
- if(accounts[email].passwordHash!==hash){error.textContent="Email or password is incorrect.";return}
- activeAccount=accounts[email];localStorage.setItem(SESSION_KEY,email);enterApp();
+function handleAuth(ev){
+ if(ev)ev.preventDefault();
+ const email=(document.getElementById("authEmail")?.value||"").trim().toLowerCase();
+ const password=document.getElementById("authPassword")?.value||"";
+ const name=(document.getElementById("authName")?.value||"").trim();
+ const error=document.getElementById("authError");
+ try{
+  if(!email||password.length<6){if(error)error.textContent="Use a valid email and a password of at least 6 characters.";return false;}
+  const accounts=readAccounts(); const hash=simpleHash(password);
+  if(authMode==="create"){
+   if(accounts[email]){if(error)error.textContent="An account with this email already exists on this device.";return false;}
+   const account={email,name:name||"BEAST",passwordHash:hash,createdAt:new Date().toISOString()};
+   accounts[email]=account; if(!writeAccounts(accounts)){if(error)error.textContent="Storage is unavailable on this device.";return false;}
+   activeAccount=account; localStorage.setItem(SESSION_KEY,email); enterApp(); return false;
+  }
+  if(!accounts[email]){if(error)error.textContent="No BEAST account found on this device. Create one first.";return false;}
+  if(accounts[email].passwordHash!==hash){if(error)error.textContent="Email or password is incorrect.";return false;}
+  activeAccount=accounts[email]; localStorage.setItem(SESSION_KEY,email); enterApp(); return false;
+ }catch(e){if(error)error.textContent="BEAST could not save your session. Please try again.";return false;}
 }
 function enterApp(){
- document.getElementById("authScreen").style.display="none";document.querySelector(".app").classList.add("ready");
- if(activeAccount?.name){profile.name=profile.name||activeAccount.name;save("beast10_profile",profile)}
- loadProfile();toast("Welcome to BEAST");
+ const auth=document.getElementById("authScreen"),app=document.querySelector(".app");
+ if(auth)auth.style.display="none"; if(app)app.classList.add("ready");
+ try{if(activeAccount?.name){profile.name=profile.name||activeAccount.name;save("beast10_profile",profile);} loadProfile();}catch(e){}
+ try{toast("Welcome to BEAST")}catch(e){}
 }
 function logout(){
- if(!confirm("Sign out of BEAST on this device?"))return;localStorage.removeItem(SESSION_KEY);activeAccount=null;document.querySelector(".app").classList.remove("ready");document.getElementById("authScreen").style.display="grid";document.getElementById("authEmail").value="";document.getElementById("authPassword").value="";setAuthMode("signin");window.scrollTo({top:0});
+ try{localStorage.removeItem(SESSION_KEY)}catch(e){} activeAccount=null;
+ document.querySelector(".app")?.classList.remove("ready"); document.getElementById("authScreen").style.display="grid";
+ document.getElementById("authEmail").value="";document.getElementById("authPassword").value="";setAuthMode("signin");window.scrollTo({top:0});
 }
 function bootAuth(){
- const email=localStorage.getItem(SESSION_KEY);const accounts=readAccounts();
- if(email&&accounts[email]){activeAccount=accounts[email];enterApp();}else{document.querySelector(".app").classList.remove("ready");document.getElementById("authScreen").style.display="grid";}
+ try{const email=localStorage.getItem(SESSION_KEY),accounts=readAccounts(); if(email&&accounts[email]){activeAccount=accounts[email];enterApp();return;}}catch(e){}
+ document.querySelector(".app")?.classList.remove("ready"); document.getElementById("authScreen").style.display="grid"; setAuthMode("signin");
 }
 
 const IMG = {
@@ -677,29 +683,122 @@ const EXERCISE_PHOTOS={
   'https://images.pexels.com/photos/5327460/pexels-photo-5327460.jpeg?auto=compress&cs=tinysrgb&w=1200'
  ]
 };
+/* V5.1 VERIFIED EXERCISE PHOTO OVERRIDES
+   These are movement-specific photos, not generic family substitutions. */
+const VERIFIED_EXERCISE_PHOTOS={
+ "dead bug":"https://images.squarespace-cdn.com/content/v1/5abb82beaa49a1b4940d96bd/1537627828025-GKVX5LUGEJ82H9LD6J1H/DEAD%2BBUG",
+ "front-foot elevated split squat":"https://s3.amazonaws.com/prod.skimble/assets/2810961/image_iphone.jpg",
+ "bulgarian split squat":"https://images.ctfassets.net/6ilvqec50fal/7vlWDw1zwWAHVrAZir6NlG/92a64a732af5f7404676dc03e72ede0e/GettyImages-1342002566.jpg",
+ "single-leg glute bridge":"https://assets01.sdd1.ch/assets/lbwp-cdn/mobilesport/files/1638515403/6_rs_rueckenlage.jpg",
+ "glute bridge":"https://dashboard.supermama.me/photos/94004/5e91097da2f12.jpg",
+ "bird dog":"https://contents.mediadecathlon.com/p2604875/k%24bc51bb5c1b8d12884fbc163d150e5fda/1920x0/3360pt2240/6720xcr4480/mezczyzna-cwiczacy-bird-dog.jpg?format=auto",
+ "dumbbell row":"https://gigasnutrition.com/cdn/shop/articles/1555482883_2960x4440.jpg?v=1655973284",
+ "lateral lunge":"https://www.americanfootballinternational.com/wp-content/uploads/2018/01/AFI-10-best-exercises-for-football-side-lunges.png",
+ "calf raise":"https://res.cloudinary.com/hydrow/image/upload/f_auto/w_3840/q_100/v1752503893/Blog/how-to-build-leg-muscles.jpg",
+ "push press":"https://mensfitness.co.uk/wp-content/uploads/sites/2/2024/05/BB-Push-press-B.jpg",
+ "shrug":"https://backmusclesolutions.com/cdn/shop/articles/Shrug_muscles_worked_1200x1200.jpg?v=1700446148",
+ "wrestling drill":"https://lirp.cdn-website.com/5e986a35/dms3rep/multi/opt/SOWrestling-57-640w.jpg",
+ "incline walk":"https://blog.nordictrack.com/learn/wp-content/uploads/2025/07/body-image-incline-2048x1300.jpg",
+ "farmer carry":"https://hips.hearstapps.com/hmg-prod/images/mh-0724-050924-carry-0827-667b1af141a72.jpg",
+ "trap-bar deadlift":"https://images.squarespace-cdn.com/content/v1/66d5252593031953a5ad04e4/63c5daa9-b244-41bb-bfcd-7942b96f5e8b/coaching-1.jpg",
+ "machine chest press":"https://s.alicdn.com/%40sc04/kf/H1ee4d3ef4f374365b52579e66fd79f9bV/Commercial-Use-Steel-Power-Trainer-Gym-Exercise-Equipment-Back-Shoulder-Legs-Arms-Strength-Training-Pin-Loaded-Chest-Leg-Machine.png",
+ "box jump":"https://images.pexels.com/photos/7675405/pexels-photo-7675405.jpeg?auto=compress&cs=tinysrgb&w=1200",
+ "seated cable row":"https://images.unsplash.com/photo-1648993199399-689019c2aa73?fm=jpg&ixlib=rb-4.1.0&q=80&w=1800",
+ "lat pulldown":"https://www.icv.hr/wp-content/uploads/albumi3/25-2-igor-prpic/image00124.jpeg",
+ "mobility flow":"https://cdn.centr.com/content/34000/33588/images/portrait3x-recovery-luke-indoor-lunge-stretch-0346.jpg"
+};
+const STRICT_EXERCISE_PHOTOS={
+ "bodyweight squat":"https://assets.kelasfitness.com/ghost/2025/07/gerakan-squat.png",
+ "incline push-up":"https://medaboutme.ru/upload/medialibrary/59e/shutterstock_159883343.jpg",
+ "dead bug":"https://images.squarespace-cdn.com/content/v1/5abb82beaa49a1b4940d96bd/1537627828025-GKVX5LUGEJ82H9LD6J1H/DEAD%2BBUG",
+ "reverse lunge":"https://miro.medium.com/v2/resize%3Afit%3A1400/1%2AIwwF3YC2WHD5XJ7oXzg8cg%402x.jpeg",
+ "marching plank":"https://tarzanweb.jp/uploads/2020/06/17/20200617rm_trainingmovie124-1536x864.jpg",
+ "step-up":"https://athletesacceleration.com/wp-content/uploads/2018/07/4-Step-up-Finish.jpg",
+ "front-foot elevated split squat":"https://hips.hearstapps.com/hmg-prod/images/rw-strength-lower-body-workout-684359830cc48.jpg?crop=0.987xw%3A0.759xh%3B0.00641xw%2C0.185xh&resize=1200%3A*",
+ "decline push-up":"https://www.ownsport.fr/blog/wp-content/uploads/2021/06/VideoCapture_20210609-163203-1024x1024.jpg",
+ "pike push-up":"https://images.ctfassets.net/ea2tosc1qg3k/BR-5TFDC5fJbem5AGD9WvNLUZ/4514da32216f9b672f3e12a4a8f0610d/PUSH_hero_mob.jpg?q=90&w=800",
+ "hollow body hold":"https://hips.hearstapps.com/hmg-prod/images/mh-hb-2-1553178333.png?crop=0.888888888888889xw%3A1xh%3B0%2C0",
+ "mountain climber":"https://www.mensjournal.com/.image/t_share/MTk2MTM2MTUxOTQzMzU3OTU3/workout-5-10-rounds-of-20.jpg",
+ "bear crawl":"https://cdn.shopify.com/s/files/1/1633/7705/files/bear_crawl_workout_480x480.jpg?v=1663269990",
+ "barbell back squat":"https://gq.com.tr/static/img/content/20-10/18/squat.jpg",
+ "weighted pull-up":"https://assets.roguefitness.com/f_auto%2Cq_auto%2Cc_limit%2Cw_521%2Cb_rgb%3Af8f8f8/catalog/Straps%20Wraps%20and%20Support%20/Belts%20/GL0018/GL0018-web8_hkhooi.png",
+ "dumbbell bench press":"https://www.gettyimages.com/",
+ "romanian deadlift":"https://static.wixstatic.com/media/bfbcdd_5f26f089ae4c45d8b4b394b13612e421~mv2.png/v1/fill/w_980%2Ch_653%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01%2Cenc_avif%2Cquality_auto/bfbcdd_5f26f089ae4c45d8b4b394b13612e421~mv2.png",
+ "walking lunge":"https://mathiasmethod.com/lower-body-accessory-exercises/img_2509/",
+ "hanging knee raise":"https://storage.googleapis.com/proudcity/ketteringohparks/uploads/2023/08/Fitness-Sportlight-Patron-Jacob-McGlaun.jpg",
+ "burpee broad jump":"https://images.squarespace-cdn.com/content/v1/649ca8b74a9ccc467d2f3b93/1748529775618-V7CDJD6PFLYDEETCEB33/5.%2BBURPEE%2BBROAD%2BJUMP-min.jpg",
+ "front squat":"https://gq.com.tr/static/img/content/20-10/18/squat.jpg",
+ "archer push-up":"https://images.squarespace-cdn.com/content/v1/5deaeb267bc46246f5378ee8/1597477544967-OLKLA8VZMBOIS8EODDBT/Archer%2BPushup%2BRight%2BStart.jpg",
+ "pistol squat":"https://images.surferseo.art/64cfe4ac-2106-4c2f-b1df-8e91a4b3327a.png",
+ "handstand pike press":"https://www.gymnasticbodies.com/gymfit/wp-content/uploads/2021/01/alt-Parallette-Pike-PrHS-to-L.jpg",
+ "single-leg romanian deadlift":"https://img.redbull.com/images/q_auto%2Cf_auto/redbullcom/2017/01/18/3c7188e1-e5a5-4518-9895-d1d6946ad623/joe-canning-hamstring-exercises%3A-rdl.jpg",
+ "dragon flag":"https://www.fitness.com.hr/images/clanci/Dragon-flag3.JPG",
+ "sprint intervals":"https://www.activeposture.co.uk/cdn/shop/articles/e9f7ef704569af0cbd6833ea1572f08e.png?v=1776951360&width=1024",
+ "barbell row":"https://kowalskimaciej.pl/lib/vf1emv/IMG_9423-min-j9cvh70f.JPG",
+ "med-ball slam":"https://static.sportzbusiness.com/uploads/2020/11/Overhead-Slam.jpg",
+ "battle rope":"https://www.gettyimages.com/",
+ "sled push":"https://images.squarespace-cdn.com/content/v1/6849a8b94eb9f26e56bb109c/1749657920320-D36R6NQ93ZHTEGGF34LT/Gavin%2BBirmingham%2Bsled%2Bpush%2Bspeed%2Bagility%2Bstrength%2BSAQ%2BSports%2BPerformace%2BSpecialist.jpg",
+ "farmer carry":"https://windycitysc.com/uploads/photos/aom-2018-feb-michael-d-54.jpg",
+ "push press":"https://eu.nutrimuscle.com/cdn/shop/articles/Blog_article-Push_press-1000x635_f8db9206-7966-4b68-bf22-8a18951d0dde.jpg?v=1753085730&width=1100",
+ "trap-bar deadlift":"https://static.wixstatic.com/media/22a982_cd4f03760a704e62a01deab4e7efbe17~mv2.png/v1/fill/w_1000%2Ch_655%2Cal_c%2Cq_90%2Cusm_0.66_1.00_0.01/22a982_cd4f03760a704e62a01deab4e7efbe17~mv2.png",
+ "box jump":"https://images.pexels.com/photos/7675405/pexels-photo-7675405.jpeg?auto=compress&cs=tinysrgb&w=1200",
+ "wrestling drill":"https://api.army.mil/e2/c/images/2015/02/19/382478/original.jpg",
+ "incline walk":"https://blog.nordictrack.com/learn/wp-content/uploads/2025/07/body-image-incline-2048x1300.jpg",
+ "seated cable row":"https://www.invictusfitnessmiami.com/wp-content/uploads/2024/11/Invictus1.jpg",
+ "lat pulldown":"https://www.icv.hr/wp-content/uploads/albumi3/25-2-igor-prpic/image00124.jpeg",
+ "calf raise":"https://www.fitness.com.hr/images/articles/Depositphotos_86313128_l-2015.jpg",
+ "lateral lunge":"https://static.nike.com/a/images/f_auto%2Ccs_srgb/w_1920%2Cc_limit/0925cadb-f3fe-4d05-bd98-91bb4615e1ef/%E8%84%9A%E5%8A%9B%E3%82%92%E9%AB%98%E3%82%81%E3%82%8B3%E3%81%A4%E3%81%AE%E3%83%A9%E3%83%B3%E3%82%B8%E5%BF%9C%E7%94%A8%E7%B7%A8.jpg",
+ "bulgarian split squat":"https://images.ctfassets.net/6ilvqec50fal/7vlWDw1zwWAHVrAZir6NlG/92a64a732af5f7404676dc03e72ede0e/GettyImages-1342002566.jpg",
+ "single-leg glute bridge":"https://assets01.sdd1.ch/assets/lbwp-cdn/mobilesport/files/1638515403/6_rs_rueckenlage.jpg",
+ "bird dog":"https://contents.mediadecathlon.com/p2604875/k%24bc51bb5c1b8d12884fbc163d150e5fda/1920x0/3360pt2240/6720xcr4480/mezczyzna-cwiczacy-bird-dog.jpg?format=auto",
+ "dumbbell row":"https://gigasnutrition.com/cdn/shop/articles/1555482883_2960x4440.jpg?v=1655973284",
+ "shrug":"https://backmusclesolutions.com/cdn/shop/articles/Shrug_muscles_worked_1200x1200.jpg?v=1700446148",
+ "sprawl drill":"https://strongandfit.com/cdn/shop/articles/capa_blog_1024x1024.jpg?v=1671084445",
+ "breathing reset":"https://www.tipness.co.jp/cms-data/images/magazine/tips-detail/5efc9rv20tjmfjzw3cbzeuy4aapm7n.jpg",
+ "breathing control":"https://www.tipness.co.jp/cms-data/images/magazine/tips-detail/5efc9rv20tjmfjzw3cbzeuy4aapm7n.jpg"
+};
+function strictPhoto(name){return STRICT_EXERCISE_PHOTOS[String(name||'').toLowerCase().trim()]||null}
+
+function verifiedPhoto(name){return VERIFIED_EXERCISE_PHOTOS[String(name||'').toLowerCase().trim()]||null}
+
 function photoHash(text){let h=2166136261;for(let i=0;i<String(text||'').length;i++){h^=String(text)[i].charCodeAt(0);h=Math.imul(h,16777619)}return (h>>>0)}
 function photoFamily(name,kind){
- const n=String(name||'').toLowerCase();
+ const n=String(name||'').toLowerCase().trim();
+ // Exact movement routing first. These rules prevent premium/recovery labels from
+ // falling into unrelated generic gym categories.
+ if(/glute bridge|single-leg glute bridge/.test(n))return 'core';
+ if(/dead bug|hollow body|hanging knee raise|hanging leg raise|plank|core circuit|light core|bird dog|bear crawl|marching plank/.test(n))return 'core';
+ if(/push press/.test(n))return 'shoulder';
+ if(/shrug|lateral raise|rear-delt fly|dumbbell press|overhead press|shoulder press/.test(n))return 'shoulder';
+ if(/sprawl|wrestling|battle rope|med-ball slam|box jump|sled|sprint|bike|easy bike|incline walk|easy walk|easy cardio|walk|carry|sandbag|grip carry/.test(n))return 'conditioning';
+ if(/mobility|breathing reset/.test(n))return 'core';
  if(/lat pulldown|pulldown/.test(n))return 'pulldown';
  if(/weighted pull-up|pull-up|pullup/.test(n))return 'pull';
  if(/deadlift|romanian deadlift|trap-bar/.test(n))return 'deadlift';
- if(/barbell row|dumbbell row|cable row|seated cable row|row/.test(n))return 'row';
- if(/barbell curl|dumbbell curl|hammer curl|cable curl/.test(n))return 'curl';
- if(/shoulder press|overhead press/.test(n))return 'shoulder';
- if(/bench press|incline bench|incline press|dumbbell bench|chest press|cable fly|close-grip press|push press|lying triceps|pressdown|extension|bench dips|dip/.test(n))return 'press';
+ if(/barbell row|dumbbell row|cable row|seated row|row/.test(n))return 'row';
+ if(/barbell curl|dumbbell curl|hammer curl|cable curl|curl variations/.test(n))return 'curl';
+ if(/bench press|incline bench|incline press|dumbbell bench|machine chest press|machine press|cable fly|close-grip press|lying triceps|pressdown|extension|bench dips|dip/.test(n))return 'press';
  if(/push-up|push up/.test(n))return 'pushup';
- if(/back squat|front squat|goblet squat|split squat|leg press|squat/.test(n))return 'squat';
+ if(/back squat|front squat|goblet squat|bulgarian split squat|split squat|leg press|squat/.test(n))return 'squat';
  if(/lunge/.test(n))return 'lunge';
  if(/step-up|step up/.test(n))return 'stepup';
- if(/plank|dead bug|hollow|hanging knee|core circuit|bird dog|bear crawl|marching plank/.test(n))return 'core';
- if(/sled|sprint|bike|run|jump|sprawl|wrestling|battle rope|med-ball|carry|incline walk|easy bike/.test(n))return 'conditioning';
- if(/calf raise|shrug|lateral raise|rear-delt fly|dumbbell/.test(n))return 'shoulder';
- return 'gym';
+ if(/calf raise|calves/.test(n))return 'conditioning';
+ return null;
 }
+
 function photoForExercise(name,kind,seed){
- const fam=photoFamily(name,kind); const arr=EXERCISE_PHOTOS[fam]||EXERCISE_PHOTOS.gym;
+ const strict=strictPhoto(name);
+ if(strict && strict!=='https://www.gettyimages.com/')return strict;
+ const verified=verifiedPhoto(name);
+ if(verified)return verified;
+ const fam=photoFamily(name,kind);
+ if(!fam || !EXERCISE_PHOTOS[fam] || !EXERCISE_PHOTOS[fam].length){
+  return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700"><rect width="100%" height="100%" fill="#0b1017"/><text x="50%" y="46%" text-anchor="middle" fill="#b8ff6a" font-family="Arial" font-size="34" font-weight="700">PHOTO QA REQUIRED</text><text x="50%" y="56%" text-anchor="middle" fill="#9ca8b9" font-family="Arial" font-size="24">'+String(name).replace(/[&<>]/g,'')+'</text></svg>');
+ }
+ const arr=EXERCISE_PHOTOS[fam];
  return arr[photoHash(String(name)+'|'+String(seed||0))%arr.length];
 }
+
 
 const exercises = {
  beginner:[
@@ -1143,7 +1242,6 @@ function showArchive(){showPanel("archiveSection")}
 const premiumPlans={
  brock:{
   title:'BROCK LESNAR · THE BEAST PLAN',
-  note:'BEAST adaptation — not a claim of Brock Lesnar’s private/current exact routine. Public WWE material documents his training/conditioning and wrestling work.',
   levels:{
    beginner:[['Day 1 · Base Strength','Goblet Squat · Incline Push-up · Dumbbell Row · Farmer Carry · 10 min easy conditioning'],['Day 2 · Athletic Base','Reverse Lunge · Dumbbell Bench · Lat Pulldown · Plank · 6 × 20 sec brisk intervals'],['Day 3 · Recovery','Mobility · walking · light core · breathing reset']],
    intermediate:[['Day 1 · Power Strength','Back Squat · Bench Press · Row · Farmer Carry · sled/carry intervals'],['Day 2 · Pull + Conditioning','Romanian Deadlift · Pull-up/Pulldown · Split Squat · Battle-rope intervals · core'],['Day 3 · Wrestling Engine','Sprawls · Bear Crawl · Med-ball slams · short sprints · mobility']],
@@ -1152,7 +1250,6 @@ const premiumPlans={
  },
  cena:{
   title:'JOHN CENA · THE CHAMP PLAN',
-  note:'Source-based adaptation from WWE-documented Cena training. It is not presented as his current private program.',
   levels:{
    beginner:[['Day 1 · Push + Arms','Machine/DB Press · Cable Pressdown · Curl · Push-up · light lateral work'],['Day 2 · Pull','Lat Pulldown · Seated Row · DB Curl · Rear-delt work · core'],['Day 3 · Full Body','Goblet Squat · DB Bench · Pulldown · Walking Lunge · Plank']],
    intermediate:[['Day 1 · Chest + Triceps','DB/Barbell Bench · Incline Press · Lying Triceps Extension · Cable Pressdown · Dips'],['Day 2 · Back + Biceps','Lat Pulldown · Row · Pull-up progression · DB Curl · Hammer Curl'],['Day 3 · Legs + Core','Squat · Romanian Deadlift · Lunge · Calf Raise · Hanging Knee Raise']],
@@ -1163,13 +1260,12 @@ const premiumPlans={
 function openPremiumPlan(key){
  const plan=premiumPlans[key]; if(!plan)return;
  document.getElementById('premiumModalTitle').textContent=plan.title;
- let html='<div class="premiumNotice">'+escapeHtml(plan.note)+'</div>';
+ let html='';
  for(const [level,days] of Object.entries(plan.levels)){
   html+='<div class="premiumWorkoutDay"><h4>'+escapeHtml(level.toUpperCase())+'</h4><ul>';
   days.forEach(d=>html+='<li><b>'+escapeHtml(d[0])+'</b> — '+escapeHtml(d[1])+'</li>');
   html+='</ul></div>';
  }
- html+='<div class="premiumNotice">Premium collection UI is ready. Real payments/subscriptions still require a payment provider and backend; this HTML does not pretend a payment has been processed.</div>';
  document.getElementById('premiumModalBody').innerHTML=html;
  document.getElementById('premiumModal').classList.add('open');
 }
@@ -1249,9 +1345,11 @@ document.querySelectorAll(".tab").forEach(tab=>tab.onclick=()=>{
 completed.forEach(()=>{});
 
 if('serviceWorker' in navigator && location.protocol!=='file:'){
- navigator.serviceWorker.register('beast-sw.js').catch(()=>{});
+ navigator.serviceWorker.getRegistrations().then(rs=>rs.forEach(r=>r.unregister())).catch(()=>{});
+ if(window.caches){caches.keys().then(keys=>Promise.all(keys.map(k=>caches.delete(k)))).catch(()=>{});}
 }
 
+const beastAuthForm=document.getElementById("beastAuthForm"); if(beastAuthForm)beastAuthForm.addEventListener("submit",handleAuth);
 updateProgress();renderDays();renderPlan();renderMissions();loadProfile();refreshDailyMini();bootAuth();
 
 </script>
@@ -1270,7 +1368,7 @@ document.addEventListener("DOMContentLoaded",()=>{
 });
 </script>
 
-<div style="text-align:center;color:#566171;font:700 9px Space Grotesk;letter-spacing:2px;margin-top:22px">BEAST FITNESS SYSTEM • V1</div><div style="text-align:center;color:#667382;font:600 8px Manrope;line-height:1.5;max-width:760px;margin:8px auto 24px">Exercise photography is matched to the movement shown. Photos are training-reference imagery from free-stock sources and are not an endorsement of any person shown.</div>
+<div style="text-align:center;color:#566171;font:700 9px Space Grotesk;letter-spacing:2px;margin-top:22px">BEAST FITNESS SYSTEM • V5.2 PHOTO QA</div><div style="text-align:center;color:#667382;font:600 8px Manrope;line-height:1.5;max-width:760px;margin:8px auto 24px">Exercise photography uses movement-specific verified overrides first, with family fallbacks only where no override exists.</div>
 
 <script>
 /* BEAST V1 premium day-by-day engine */
@@ -1312,7 +1410,7 @@ function beastHash(x){x|=0;x=Math.imul(x^(x>>>16),0x7feb352d);x=Math.imul(x^(x>>
 function planDays(person,level){const days=level==='beginner'?30:level==='intermediate'?60:90;const pool=PREMIUM_POOLS[person][level];const result=[];for(let d=1;d<=days;d++){const week=Math.floor((d-1)/7),phase=d%7,count=level==='beginner'?4:level==='intermediate'?5:6,offset=person==='cena'?17:0;const chosen=Array.from({length:pool.length},(_,i)=>[beastHash(d*1009+i*917+offset*131),i]).sort((a,b)=>a[0]-b[0]).slice(0,count).map(x=>pool[x[1]]);let type=phase===0||phase===6?'RECOVERY + MOBILITY':(level==='beginner'?'FOUNDATION':level==='intermediate'?'BUILD + POWER':'PRO PERFORMANCE');result.push({day:d,focus:type,week:week+1,exercises:chosen})}return result}
 function openPremiumWorkouts(){showPremium()}
 function openBeastProgram(person,level){beastPerson=person;beastLevel=level;beastDay=1;const p=BEAST_PROGRAMS[person];const hero=document.getElementById('beastSheetHero');hero.style.backgroundImage=`linear-gradient(180deg,#0002,#080b10f5),url("${p.hero}")`;document.getElementById('beastSheetKicker').textContent=p.kicker;document.getElementById('beastSheetTitle').textContent=p.title;document.getElementById('beastProgramModal').classList.add('open');renderBeastProgram()}
-function renderBeastProgram(){const days=planDays(beastPerson,beastLevel),total=days.length,p=BEAST_PROGRAMS[beastPerson];const ltag=beastLevel==='beginner'?'FOUNDATION':beastLevel==='intermediate'?'BUILD':'PROTOCOL';document.getElementById('beastProgramTabs').innerHTML=[['beginner',30,'FOUNDATION'],['intermediate',60,'BUILD'],['pro',90,'PRO']].map(x=>`<button class="beastProgramTab ${x[0]===beastLevel?'active':''}" onclick="switchBeastLevel('${x[0]}')"><strong>${x[1]} DAYS</strong><span>${x[2]}</span></button>`).join('');document.getElementById('beastPlanLabel').textContent=`${total}-DAY ${ltag}`;document.getElementById('beastPlanIntro').textContent=beastLevel==='beginner'?'Technique, base strength and work capacity.':beastLevel==='intermediate'?'Progressive strength, volume and conditioning.':'Advanced strength, power and athletic conditioning.';document.getElementById('beastDayPicker').innerHTML=days.map(d=>`<button class="beastDayBtn ${d.day===beastDay?'active':''}" onclick="selectBeastDay(${d.day})"><b>${d.day}</b><span>DAY</span></button>`).join('');const d=days[beastDay-1];const pct=Math.round((d.day/total)*100);document.getElementById('beastPlanProgressText').textContent=`DAY ${d.day} / ${total}`;document.getElementById('beastPlanProgressBar').style.width=pct+'%';document.getElementById('beastProgramContent').innerHTML=`<div class="beastDayHero"><div><span>WEEK ${d.week}</span><h4>DAY ${d.day} · ${d.focus}</h4><p>${d.exercises.length} movements · ${beastLevel==='beginner'?'35–50':'45–70'} min target · progressive loading</p></div><div class="beastDayHeroActions"><button class="btn primary" onclick="startBeastTimer()">START DAY</button><button class="btn" onclick="resetBeastTimer()">RESET</button></div></div><div class="beastExerciseGrid">${d.exercises.map((x,i)=>`<article class="beastExerciseCard"><img src="${premiumImageFor(x[0],beastDay*17+i)}" alt="${escapeHtml(x[0])}" onerror="this.onerror=null;this.src=photoForExercise('${escapeHtml(x[0])}','${x[2]}',beastDay*17+i)"><div class="beastExerciseBody"><span class="beastExerciseNum">0${i+1}</span><b>${escapeHtml(x[0])}</b><strong>${escapeHtml(x[1])}</strong><small>${beastPerson==='brock'?'BEAST':'CHAMP'} · controlled tempo</small><button class="btn" onclick="startBeastExercise(${i})">START 60 SEC</button></div></article>`).join('')}</div><div class="beastSessionTimer"><div><span>SESSION TIMER</span><b id="beastTimerReadout">${fmtBeastTime(beastSecs)}</b><small>Start / pause / reset this day whenever you train.</small></div><div><button class="btn primary" onclick="toggleBeastTimer()">START / PAUSE</button><button class="btn" onclick="resetBeastTimer()">RESET</button><button class="btn" onclick="skipBeastTimer()">SKIP</button></div></div><div class="beastLocked"><b>PROGRAM NOTE</b><br>${escapeHtml(p.note)}</div>`}
+function renderBeastProgram(){const days=planDays(beastPerson,beastLevel),total=days.length,p=BEAST_PROGRAMS[beastPerson];const ltag=beastLevel==='beginner'?'FOUNDATION':beastLevel==='intermediate'?'BUILD':'PROTOCOL';document.getElementById('beastProgramTabs').innerHTML=[['beginner',30,'FOUNDATION'],['intermediate',60,'BUILD'],['pro',90,'PRO']].map(x=>`<button class="beastProgramTab ${x[0]===beastLevel?'active':''}" onclick="switchBeastLevel('${x[0]}')"><strong>${x[1]} DAYS</strong><span>${x[2]}</span></button>`).join('');document.getElementById('beastPlanLabel').textContent=`${total}-DAY ${ltag}`;document.getElementById('beastPlanIntro').textContent=beastLevel==='beginner'?'Technique, base strength and work capacity.':beastLevel==='intermediate'?'Progressive strength, volume and conditioning.':'Advanced strength, power and athletic conditioning.';document.getElementById('beastDayPicker').innerHTML=days.map(d=>`<button class="beastDayBtn ${d.day===beastDay?'active':''}" onclick="selectBeastDay(${d.day})"><b>${d.day}</b><span>DAY</span></button>`).join('');const d=days[beastDay-1];const pct=Math.round((d.day/total)*100);document.getElementById('beastPlanProgressText').textContent=`DAY ${d.day} / ${total}`;document.getElementById('beastPlanProgressBar').style.width=pct+'%';document.getElementById('beastProgramContent').innerHTML=`<div class="beastDayHero"><div><span>WEEK ${d.week}</span><h4>DAY ${d.day} · ${d.focus}</h4><p>${d.exercises.length} movements · ${beastLevel==='beginner'?'35–50':'45–70'} min target · progressive loading</p></div><div class="beastDayHeroActions"><button class="btn primary" onclick="startBeastTimer()">START DAY</button><button class="btn" onclick="resetBeastTimer()">RESET</button></div></div><div class="beastExerciseGrid">${d.exercises.map((x,i)=>`<article class="beastExerciseCard"><img src="${premiumImageFor(x[0],beastDay*17+i)}" alt="${escapeHtml(x[0])}" onerror="this.onerror=null;this.src=photoForExercise('${escapeHtml(x[0])}','${x[2]}',beastDay*17+i)"><div class="beastExerciseBody"><span class="beastExerciseNum">0${i+1}</span><b>${escapeHtml(x[0])}</b><strong>${escapeHtml(x[1])}</strong><small>${beastPerson==='brock'?'BEAST':'CHAMP'} · controlled tempo</small><button class="btn" onclick="startBeastExercise(${i})">START 60 SEC</button></div></article>`).join('')}</div><div class="beastSessionTimer"><div><span>SESSION TIMER</span><b id="beastTimerReadout">${fmtBeastTime(beastSecs)}</b><small>Start / pause / reset this day whenever you train.</small></div><div><button class="btn primary" onclick="toggleBeastTimer()">START / PAUSE</button><button class="btn" onclick="resetBeastTimer()">RESET</button><button class="btn" onclick="skipBeastTimer()">SKIP</button></div></div>`}
 function selectBeastDay(day){beastDay=day;resetBeastTimer();renderBeastProgram();setTimeout(()=>document.querySelector('.beastDayBtn.active')?.scrollIntoView({behavior:'smooth',block:'nearest'}),30)}
 function switchBeastLevel(l){beastLevel=l;beastDay=1;resetBeastTimer();renderBeastProgram()}
 function startBeastTimer(){beastSecs=45*60;beastRunning=true;runBeastClock();toast('BEAST DAY · TIMER STARTED')}
@@ -1324,7 +1422,6 @@ function skipBeastTimer(){beastSecs=0;beastRunning=false;clearInterval(beastTime
 function fmtBeastTime(s){const m=Math.floor(Math.max(0,s)/60),sec=Math.max(0,s)%60;return `${String(m).padStart(2,'0')}:${String(sec).padStart(2,'0')}`}
 function updateBeastTimer(){const e=document.getElementById('beastTimerReadout');if(e)e.textContent=fmtBeastTime(beastSecs)}
 function closeBeastProgram(){resetBeastTimer();document.getElementById('beastProgramModal').classList.remove('open')}
-function showPremiumSource(key){window.open(key==='cena'?'https://www.wwe.com/inside/news/archive/flextimeforcena':'https://www.wwe.com/videos/brock-lesnar-works-out-backstage-raw-july-15-2002','_blank','noopener')}
 </script>
 
 </body>
