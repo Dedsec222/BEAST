@@ -30,7 +30,7 @@ jobs:
       - name: Prepare BEAST web app
         run: |
           mkdir -p www
-          cp beast-v2.html www/index.html
+          cp index.html www/index.html
 
       - name: Create Android project
         run: |
